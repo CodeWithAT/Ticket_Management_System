@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Help Desk (Project Types)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .comment-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .comment-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .comment-scrollbar::-webkit-scrollbar-track { background-color: #f1f5f9; }
+        .view { display: none !important; }
+        .view.active { display: block !important; animation: fadeIn 0.3s ease-out; }
+        #auth-view.view.active { display: flex !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .animated-gradient { background: linear-gradient(-45deg, #f0fdfa, #ccfbf1, #a7f3d0, #0d9488); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 30px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        .animate-fadeInUp { opacity: 1; animation: fadeInUp 0.6s ease-out; }
+        button, input, select, textarea, a { transition: all 0.2s ease-in-out; }
+        button:hover, a:hover { transform: translateY(-1px); }
+        button:active, a:active { transform: translateY(0); }
+        input:focus, select:focus, textarea:focus, button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3); border-color: #0d9488; }
+        .ticket-tab-button { border-bottom: 3px solid transparent; transform: translateY(1px); }
+        .ticket-tab-button.active { border-color: #0d9488; color: #0d9488; font-weight: 600; }
+        .ticket-tab-panel { display: none; }
+        .ticket-tab-panel.active { display: block; }
+        .toast { position: fixed; top: 20px; right: 20px; background-color: #ef4444; color: white; padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; animation: toast-in 0.3s ease-out; }
+        @keyframes toast-in { from { opacity: 0; transform: translate3d(100%, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+        .toast.fade-out { animation: toast-out 0.5s ease-in forwards; }
+        @keyframes toast-out { from { opacity: 1; transform: translate3d(0, 0, 0); } to { opacity: 0; transform: translate3d(100%, 0, 0); } }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; animation: fadeIn 0.2s ease-out forwards; }
+        .modal-content { background-color: white; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 500px; transform: scale(0.95); animation: fadeInUp 0.2s ease-out forwards; }
+        #comment-toolbar { border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #d1d5db !important; background: #f9fafb; }
+        #comment-editor { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-color: #d1d5db !important; background: white; color: #111827; font-family: 'Inter', sans-serif; font-size: 14px; }
+        .ql-editor { min-height: 120px; }
+        .ql-snow .ql-editor.static-content { min-height: 0; border: none; line-height: 1.5; padding-top: 0; padding-bottom: 0; }
+        .ql-editor.ql-blank::before { color: #9ca3af; font-style: normal; font-family: 'Inter', sans-serif; }
+        
+        /* Avatar Stacking */
+        .avatar-group { display: flex; -space-x-2: -0.5rem; }
+        .avatar-group img { border: 2px solid white; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <svg width="0" height="0" class="hidden">
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-ticket-logo"><path d="M14 6l5 5V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7.5L14 6z"></path><path d="M9 18h6"></path><path d="M9 14h6"></path><path d="M9 10h3"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-ticket"><path d="M14 6l5 5V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7.5L14 6z"></path><path d="M9 18h6"></path><path d="M9 14h6"></path><path d="M9 10h3"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-briefcase"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-paperclip"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-thumbs-up"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-history"><path d="M1 4v6h6"></path><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-chat"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-dashboard"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-briefcase-sm"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></symbol>
+    </svg>
+    
+    <div id="auth-view" class="view active min-h-screen animated-gradient flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-6 animate-fadeInUp" style="animation-delay: 0s;">
+                <svg class="h-12 w-12 text-teal-700 mx-auto"><use href="#icon-ticket-logo"></use></svg>
+                <h1 class="text-3xl font-bold text-gray-900 mt-2">Workflow Help Desk</h1>
+            </div>
+            <div id="login-view" class="auth-card view animate-fadeInUp" style="animation-delay: 0.1s;">
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900">Welcome Back</h2>
+                    <div id="login-error" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
+                    <form id="login-form" class="space-y-4">
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="login-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input type="password" id="login-password" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <div class="text-sm text-right"><a href="#" id="show-forgot-form" class="font-medium text-teal-600 hover:underline">Forgot password?</a></div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Log In</button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600">Don't have an account? <a href="#" id="show-signup-form" class="font-medium text-teal-600 hover:underline">Sign up</a></p>
+                </div>
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 mt-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <h3 class="text-lg font-semibold text-center text-gray-800 mb-4">Easy Demo Logins</h3>
+                    <div class="space-y-3">
+                        <button data-email="bob@admin.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-800 text-white rounded-md text-sm font-medium hover:bg-gray-900 shadow-sm ring-2 ring-offset-2 ring-gray-800">Log in as Admin (Bob)</button>
+                        <button data-email="charlie@tech.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log in as Tech Dept (Charlie)</button>
+                        <button data-email="dana@billing.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log in as Billing Dept (Dana)</button>
+                        <button data-email="alice@client.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium hover:bg-gray-600 shadow-sm">Log in as Client (Alice)</button>
+                    </div>
+                </div>
+            </div>
+            <div id="signup-view" class="auth-card view animate-fadeInUp">
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900">Create an Account</h2>
+                    <div id="signup-error" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
+                    <form id="signup-form" class="space-y-4">
+                        <div>
+                            <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" id="signup-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="signup-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input type="password" id="signup-password" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Create Account</button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600">Already have an account? <a href="#" id="show-login-form-from-signup" class="font-medium text-teal-600 hover:underline">Log in</a></p>
+                </div>
+            </div>
+            <div id="forgot-password-view" class="auth-card view animate-fadeInUp">
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900">Reset Password</h2>
+                    <div id="forgot-success" class="hidden p-3 bg-green-100 text-green-700 rounded-md text-sm"></div>
+                    <p class="text-sm text-gray-600 text-center">Enter your email and we'll send you instructions to reset your password. (This is a simulation).</p>
+                    <form id="forgot-form" class="space-y-4">
+                        <div>
+                            <label for="forgot-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="forgot-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Send Reset Link</button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600">Remembered your password? <a href="#" id="show-login-form-from-forgot" class="font-medium text-teal-600 hover:underline">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app-view" class="view">
+        <nav class="bg-white shadow-md w-full sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center gap-4">
+                        <svg class="h-6 w-6 text-teal-600"><use href="#icon-ticket-logo"></use></svg>
+                        <h1 id="nav-title" class="text-xl font-bold text-teal-600">Workflow Help Desk</h1>
+                    </div>
+                    <div id="nav-right-side" class="flex items-center gap-4"></div>
+                </div>
+            </div>
+        </nav>
+
+        <main id="app-container" class="w-full bg-gray-50 min-h-[calc(100vh-64px)]">
+            
+            <div id="dashboard-view" class="app-view view h-full">
+                </div>
+
+            <div id="new-project-view" class="app-view view max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                <button id="cancel-new-project" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to Projects
+                </button>
+                <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-semibold text-gray-900">Create a New Project</h2>
+                    </div>
+                    <form id="new-project-form" class="p-6 space-y-4">
+                        <div>
+                            <label for="new-project-name" class="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                            <input type="text" id="new-project-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="e.g., Q4 Marketing Website" required>
+                        </div>
+                        
+                        <div>
+                            <label for="new-project-type" class="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
+                            <select id="new-project-type" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                                <option value="External">External (Client Facing)</option>
+                                <option value="Internal">Internal (Company Only)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="new-project-description" class="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+                            <textarea id="new-project-description" rows="3" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="A brief description of the project..."></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" id="cancel-new-project-form" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">
+                                Cancel
+                            </button>
+                            <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                                Create Project
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="project-detail-view" class="app-view view max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                <button id="back-to-projects" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to All Projects
+                </button>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="project-detail-title" class="text-3xl font-bold text-gray-900">Project Title</h2>
+                    <button id="show-new-ticket-form" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
+                        <svg class="h-5 w-5 mr-2 -ml-1"><use href="#icon-plus"></use></svg>
+                        Create New Ticket
+                    </button>
+                </div>
+                <div id="project-ticket-lists" class="space-y-8">
+                    </div>
+            </div>
+
+            <div id="ticket-detail-view" class="app-view view max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                <button id="back-to-project-detail" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to Project
+                </button>
+                <div id="ticket-detail-header" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-6"></div>
+                <div id="ticket-detail-content" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                            <nav class="flex border-b border-gray-200" id="ticket-tab-nav"></nav>
+                            <div id="ticket-tab-content" class="p-6"></div>
+                        </div>
+                    </div>
+                    <div id="ticket-detail-sidebar" class="lg:col-span-1 space-y-6"></div>
+                </div>
+            </div>
+
+            <div id="new-ticket-view" class="app-view view max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                <button id="cancel-new-ticket" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to Project
+                </button>
+                <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-semibold text-gray-900">Create a New Ticket</h2>
+                    </div>
+                    <form id="new-ticket-form" class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="new-ticket-name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                <input type="text" id="new-ticket-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+                            <div>
+                                <label for="new-ticket-email" class="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
+                                <input type="email" id="new-ticket-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+                        </div>
+                        
+                        <div id="new-ticket-project-wrapper" class="hidden">
+                            <label for="new-ticket-project" class="block text-sm font-medium text-gray-700 mb-1">Project</label>
+                            <input type="text" id="new-ticket-project-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly>
+                        </div>
+                        
+                        <div>
+                            <label for="new-ticket-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                            <select id="new-ticket-priority" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="new-ticket-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                            <input type="text" id="new-ticket-subject" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="e.g., Website is down" required>
+                        </div>
+                        <div>
+                            <label for="new-ticket-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date (Optional)</label>
+                            <input type="date" id="new-ticket-due-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label for="new-ticket-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="new-ticket-description" rows="5" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="Describe your issue in detail..." required></textarea>
+                        </div>
+                        <div id="internal-ticket-toggle" class="hidden">
+                            <div class="flex items-center">
+                                <input id="new-ticket-internal" type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
+                                <label for="new-ticket-internal" class="ml-2 block text-sm text-gray-900">
+                                    Mark as Internal Ticket (not visible to clients)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" id="cancel-new-ticket-form" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">
+                                Cancel
+                            </button>
+                            <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                                Submit Ticket
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="insert-link-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Insert Link</h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-6 w-6"><use href="#icon-x"></use></svg>
+                </button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div>
+                    <label for="modal-link-text" class="block text-sm font-medium text-gray-700 mb-1">Text to display</label>
+                    <input type="text" id="modal-link-text" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label for="modal-link-url" class="block text-sm font-medium text-gray-700 mb-1">To what URL should this link go?</label>
+                    <input type="url" id="modal-link-url" placeholder="https://example.com" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 p-4 border-t bg-gray-50 rounded-b-lg">
+                <button id="modal-cancel-btn" type="button" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200">Cancel</button>
+                <button id="modal-insert-btn" type="button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700">Insert Link</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+    <script type="module">
+        // --- FAKE DATABASE & MOCK DATA ---
+        const MOCK_DATA = {
+            users: [
+                { id: 'u1', name: 'Alice Smith', email: 'alice@client.com', role: 'User', password: 'password123' },
+                { id: 'u2', name: 'Bob Johnson (Admin)', email: 'bob@admin.com', role: 'Admin', password: 'password123' },
+                { id: 'u3', name: 'User 3', email: 'user3@client.com', role: 'User', password: 'password123' },
+                { id: 'd1', name: 'Charlie (Tech)', email: 'charlie@tech.com', role: 'Department', departmentId: 'dept1', password: 'password123' },
+                { id: 'd2', name: 'Dana (Billing)', email: 'dana@billing.com', role: 'Department', departmentId: 'dept2', password: 'password123' },
+            ],
+            departments: [
+                { id: 'dept1', name: 'Technical Support' },
+                { id: 'dept2', name: 'Billing Department' },
+            ],
+            // Added "type" property here
+            projects: [
+                { id: 'p1', name: 'Main Website Redesign', type: 'External', description: "Overhaul of the corporate website with new branding." },
+                { id: 'p2', name: 'Mobile App (iOS)', type: 'External', description: "Development of the new customer-facing iOS application." },
+                { id: 'p3', name: 'Internal Tools', type: 'Internal', description: "Maintenance and updates for internal admin dashboards." },
+            ],
+            tickets: [
+                {
+                    id: 'T-1001',
+                    subject: 'Website is down',
+                    projectId: 'p1',
+                    createdByUserId: 'u1',
+                    type: 'External',
+                    status: 'New',
+                    priority: 'High',
+                    description: 'Our main website is not loading. We are getting a 500 error.',
+                    assignedToUserId: null,
+                    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                    dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                    resolution: null,
+                    timeEntries: [],
+                    comments: [
+                        { userId: 'u1', text: '<p>This is urgent, please help!</p>', isHtml: true, timestamp: new Date(Date.now() - 1 * 59 * 60 * 1000).toISOString() }
+                    ],
+                    history: [
+                        { userId: 'u1', userName: 'Alice Smith', action: 'created the ticket', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u1', userName: 'Alice Smith', action: 'added a comment', timestamp: new Date(Date.now() - 1 * 59 * 60 * 1000).toISOString() }
+                    ]
+                },
+                {
+                    id: 'T-1002',
+                    subject: 'Password reset failure',
+                    projectId: 'p1',
+                    createdByUserId: 'u1',
+                    type: 'External',
+                    status: 'Assigned',
+                    priority: 'Medium',
+                    description: 'I am trying to reset my password but I am not receiving the email.',
+                    assignedToUserId: 'd1',
+                    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+                    dueDate: null,
+                    resolution: null,
+                    timeEntries: [],
+                    comments: [
+                        { userId: 'u1', text: '<p>I tried three times, nothing in spam.</p>', isHtml: true, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', text: '<p>Assigned to Charlie.</p>', isHtml: true, timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() }
+                    ],
+                    history: [
+                        { userId: 'u1', userName: 'Alice Smith', action: 'created the ticket', timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u1', userName: 'Alice Smith', action: 'added a comment', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', userName: 'Bob Johnson (Admin)', action: 'assigned the ticket to Charlie (Tech)', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', userName: 'Bob Johnson (Admin)', action: 'added a comment', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() }
+                    ]
+                },
+                {
+                    id: 'T-1003',
+                    subject: 'Server upgrade planning',
+                    projectId: 'p2',
+                    createdByUserId: 'u2',
+                    type: 'Internal',
+                    status: 'In Progress',
+                    priority: 'Low',
+                    description: 'We need to plan the Q4 server migration for the mobile app backend.',
+                    assignedToUserId: 'd1',
+                    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+                    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    resolution: null,
+                    timeEntries: [
+                        { userId: 'd1', hours: 2.5, date: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), description: 'Initial cost analysis and research.' }
+                    ],
+                    comments: [
+                        { userId: 'u2', text: '<p>Charlie, can you get a cost estimate?</p>', isHtml: true, timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd1', text: '<p>On it. I will have the estimate by EOD tomorrow. Logged 2.5 hours for initial research.</p>', isHtml: true, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() }
+                    ],
+                    history: [
+                        { userId: 'u2', userName: 'Bob Johnson (Admin)', action: 'created the ticket', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', userName: 'Bob Johnson (Admin)', action: 'assigned the ticket to Charlie (Tech)', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd1', userName: 'Charlie (Tech)', action: 'changed status to In Progress', timestamp: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', userName: 'Bob Johnson (Admin)', action: 'added a comment', timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd1', userName: 'Charlie (Tech)', action: 'added a comment', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd1', userName: 'Charlie (Tech)', action: 'logged 2.5 hours', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() }
+                    ]
+                },
+                {
+                    id: 'T-1004',
+                    subject: 'Login Issues on Mobile',
+                    projectId: 'p2',
+                    createdByUserId: 'u3',
+                    type: 'External',
+                    status: 'New',
+                    priority: 'Medium',
+                    description: 'Can not login via iOS 15.',
+                    assignedToUserId: null,
+                    createdAt: new Date().toISOString(),
+                    dueDate: null,
+                    resolution: null,
+                    timeEntries: [],
+                    comments: [],
+                    history: []
+                }
+            ],
+            notifications: [
+                { id: 'n1', userId: 'u2', text: 'New ticket T-1002 created by Alice Smith.', timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), read: true },
+                { id: 'n2', userId: 'd1', text: 'Ticket T-1002 (Password reset failure) assigned to you.', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), read: false },
+                { id: 'n3', userId: 'u2', text: 'New ticket T-1001 created by Alice Smith.', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), read: false },
+            ]
+        };
+        // --- APPLICATION STATE ---
+        const app = {
+            state: {
+                currentUser: null,
+                currentView: 'auth-login', // dashboard, new-project, project-detail, ticket-detail, new-ticket
+                selectedProjectId: null, // NEW
+                selectedTicketId: null,
+                activeTicketTab: 'conversation',
+                users: MOCK_DATA.users,
+                departments: MOCK_DATA.departments,
+                projects: MOCK_DATA.projects,
+                tickets: MOCK_DATA.tickets,
+                notifications: MOCK_DATA.notifications,
+                quillInstance: null, // To store the editor instance
+                quillSelection: null, // To store selection for link modal
+            },
+            // --- HELPER METHODS ---
+            getUser(userId) { return this.state.users.find(u => u.id === userId) || { name: 'Unassigned' }; },
+            getProject(projectId) { return this.state.projects.find(p => p.id === projectId) || { name: 'Unknown Project' }; },
+            getDepartment(deptId) { return this.state.departments.find(d => d.id === deptId) || { name: 'No Department' }; },
+            
+            timeAgo(dateString) {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                const seconds = Math.floor((new Date() - date) / 1000);
+                if (seconds < 60) return "Just now";
+                const intervals = { year: 31536000, month: 2592000, day: 86400, hour: 3600, minute: 60 };
+                for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                    const interval = Math.floor(seconds / secondsInUnit);
+                    if (interval >= 1) return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+                }
+                return "Just now";
+            },
+            
+            formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            },
+            getStatusColor(status) {
+                const colors = { 'New': 'bg-blue-100 text-blue-800', 'Assigned': 'bg-purple-100 text-purple-800', 'In Progress': 'bg-yellow-100 text-yellow-800', 'On Hold': 'bg-gray-100 text-gray-800', 'Re-opened': 'bg-blue-100 text-blue-800', 'Closed': 'bg-green-100 text-green-800', 'Cancelled': 'bg-red-100 text-red-800' };
+                return colors[status] || 'bg-gray-100 text-gray-800';
+            },
+            getPriorityColor(priority) {
+                const colors = { 'High': 'bg-red-100 text-red-800', 'Medium': 'bg-yellow-100 text-yellow-800', 'Low': 'bg-green-100 text-green-800' };
+                return colors[priority] || 'bg-gray-100 text-gray-800';
+            },
+            showToast(message, isError = true) {
+                document.querySelectorAll('.toast').forEach(t => t.remove());
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                if (!isError) toast.style.backgroundColor = '#0d9488';
+                toast.innerHTML = `<div class="flex items-center gap-2"><svg class="h-5 w-5 flex-shrink-0"><use href="${isError ? '#icon-alert-triangle' : '#icon-check-circle'}"></use></svg><span class="font-medium">${message}</span></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('fade-out');
+                    toast.addEventListener('animationend', () => { if (document.body.contains(toast)) document.body.removeChild(toast); });
+                }, 3000);
+            },
+            logHistory(ticketId, userId, action) {
+                const ticket = this.state.tickets.find(t => t.id === ticketId);
+                const user = this.getUser(userId);
+                if (ticket) {
+                    ticket.history.push({ userId: userId, userName: user.name, action: action, timestamp: new Date().toISOString() });
+                }
+            },
+            createNotification(userId, text) {
+                this.state.notifications.unshift({ id: `n-${Date.now()}`, userId, text, timestamp: new Date().toISOString(), read: false });
+                this.renderHeader();
+            },
+            markNotificationsAsRead() {
+                this.state.notifications.filter(n => n.userId === this.state.currentUser.id).forEach(n => n.read = true);
+                this.renderHeader();
+            },
+            // --- NAVIGATION & RENDERING ---
+            navigate(viewName) {
+                this.state.currentView = viewName;
+                const authView = document.getElementById('auth-view');
+                const mainAppView = document.getElementById('main-app-view');
+                
+                if (viewName.startsWith('auth-')) {
+                    authView.classList.add('active');
+                    mainAppView.classList.remove('active');
+                    document.querySelectorAll('.auth-card').forEach(view => view.classList.remove('active'));
+                    document.getElementById(viewName.replace('auth-', '') + '-view').classList.add('active');
+                } else {
+                    authView.classList.remove('active');
+                    mainAppView.classList.add('active');
+                    document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+                    document.getElementById(viewName + '-view').classList.add('active');
+                }
+                window.scrollTo(0, 0);
+                
+                // Cleanup logic
+                if (viewName !== 'ticket-detail') {
+                    this.state.activeTicketTab = 'conversation';
+                    this.state.quillInstance = null; // Destroy Quill instance
+                }
+                if (viewName !== 'project-detail' && viewName !== 'ticket-detail' && viewName !== 'new-ticket' && viewName !== 'new-project') {
+                    this.state.selectedProjectId = null;
+                }
+                 if (viewName !== 'ticket-detail') {
+                    this.state.selectedTicketId = null;
+                }
+            },
+            render() {
+                if (!this.state.currentUser) { this.navigate('auth-login'); this.renderHeader(); return; }
+                this.renderHeader();
+                switch(this.state.currentView) {
+                    case 'dashboard': this.renderDashboard(); break;
+                    case 'new-project': this.renderNewProjectForm(); break; // NEW
+                    case 'project-detail': this.renderProjectDetail(); break;
+                    case 'ticket-detail': this.renderTicketDetail(); break;
+                    case 'new-ticket': this.renderNewTicketForm(); break;
+                    default: this.navigate('dashboard'); this.renderDashboard();
+                }
+            },
+            renderHeader() {
+                const navRight = document.getElementById('nav-right-side');
+                const navTitle = document.getElementById('nav-title');
+                if (!this.state.currentUser) { 
+                    navRight.innerHTML = ''; 
+                    navTitle.innerText = 'Workflow Help Desk';
+                    return; 
+                }
+                
+                let titleText = 'Workflow Help Desk';
+                if (this.state.currentUser.role === 'Admin') {
+                    titleText += ' | Admin Dashboard';
+                }
+                navTitle.innerText = titleText;
+                
+                const myNotifications = this.state.notifications.filter(n => n.userId === this.state.currentUser.id);
+                const unreadCount = myNotifications.filter(n => !n.read).length;
+                navRight.innerHTML = `
+                    <button id="live-chat-button" class="flex items-center text-sm font-medium text-gray-600 hover:text-teal-600 mr-2">
+                        <svg class="h-5 w-5 mr-1"><use href="#icon-chat"></use></svg> Live Chat
+                    </button>
+                    <div class="relative">
+                        <button id="notification-button" type="button" class="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none">
+                            <svg class="h-6 w-6"><use href="#icon-bell"></use></svg>
+                            <span id="notification-dot" class="${unreadCount > 0 ? '' : 'hidden'} absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                            <div class="p-3 border-b border-gray-200"><h3 class="text-base font-semibold text-gray-900">Notifications</h3></div>
+                            <div id="notification-list" class="max-h-96 overflow-y-auto comment-scrollbar">
+                                ${myNotifications.length === 0 ? '<p class="text-sm text-gray-500 p-4 text-center">No notifications.</p>' : myNotifications.map(n => `
+                                    <div class="p-4 border-b border-gray-100 hover:bg-gray-50 ${n.read ? 'opacity-70' : 'font-semibold'}">
+                                        <p class="text-sm text-gray-800">${n.text}</p><p class="text-xs text-gray-500 mt-1">${this.timeAgo(n.timestamp)}</p>
+                                    </div>`).join('')}
+                            </div>
+                            <div class="p-2 bg-gray-50 border-t border-gray-200"><button id="notification-clear" class="w-full text-center text-sm text-teal-600 hover:underline">Mark all as read</button></div>
+                        </div>
+                    </div>
+                    <button id="logout-button" class="flex items-center text-sm font-medium text-gray-600 hover:text-teal-600">
+                        <svg class="h-5 w-5 mr-1"><use href="#icon-log-out"></use></svg> Logout
+                    </button>
+                `;
+                
+                // Bind events directly here to ensure they exist
+                document.getElementById('live-chat-button').onclick = () => this.showToast('Live Chat feature is not connected to a backend.', false);
+                document.getElementById('notification-button').onclick = () => document.getElementById('notification-panel').classList.toggle('hidden');
+                document.getElementById('notification-clear').onclick = () => { this.markNotificationsAsRead(); document.getElementById('notification-panel').classList.add('hidden'); };
+                document.getElementById('logout-button').onclick = () => this.onLogout();
+            },
+            renderDashboard() {
+                const { currentUser, projects, tickets } = this.state;
+                const dashboardView = document.getElementById('dashboard-view');
+                
+                // --- NEW PROJECT CARD GENERATION LOGIC ---
+                let projectCardsHtml = '';
+                if (projects.length === 0) {
+                    projectCardsHtml = '<p class="text-gray-500 col-span-full text-center py-10">No projects have been created yet.</p>';
+                } else {
+                    projectCardsHtml = projects.map(p => {
+                        const projectTickets = tickets.filter(t => t.projectId === p.id);
+                        const openTickets = projectTickets.filter(t => t.status !== 'Closed' && t.status !== 'Cancelled').length;
+                        
+                        // FIND ACTIVE USERS FOR THIS PROJECT
+                        // Get unique User IDs from createdBy or assignedTo
+                        const userIds = new Set();
+                        projectTickets.forEach(t => {
+                            if(t.createdByUserId) userIds.add(t.createdByUserId);
+                            if(t.assignedToUserId) userIds.add(t.assignedToUserId);
+                        });
+                        const usersInProject = Array.from(userIds).map(id => this.getUser(id));
+
+                        // Generate Avatar HTML (Max 3, plus counter)
+                        let avatarsHtml = '';
+                        const maxAvatars = 4;
+                        const displayUsers = usersInProject.slice(0, maxAvatars);
+                        const extraCount = usersInProject.length - maxAvatars;
+
+                        if(usersInProject.length === 0) {
+                             avatarsHtml = '<span class="text-xs text-gray-400 italic">No active members</span>';
+                        } else {
+                            avatarsHtml = `<div class="avatar-group">` + 
+                                displayUsers.map(u => 
+                                    `<img src="https://placehold.co/24x24/e2e8f0/64748b?text=${u.name.charAt(0)}" title="${u.name}" class="h-6 w-6 rounded-full bg-gray-100 border-2 border-white">`
+                                ).join('') + 
+                                (extraCount > 0 ? `<div class="h-6 w-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-medium text-gray-600">+${extraCount}</div>` : '') +
+                                `</div>`;
+                        }
+
+                        // Use dummy description if none exists
+                        const description = p.description || "No description available for this project.";
+                        
+                        // Determine badge color based on type
+                        const typeBadgeColor = p.type === 'Internal' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+                        const typeLabel = p.type || 'External'; // Default to External if undefined
+
+                        return `
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
+                                <div class="p-5 flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-gray-900 line-clamp-1" title="${p.name}">${p.name}</h3>
+                                        <div class="flex gap-2">
+                                            <span class="text-[10px] uppercase font-bold px-2 py-1 rounded-full ${typeBadgeColor}">
+                                                ${typeLabel}
+                                            </span>
+                                            <span class="text-xs font-semibold px-2 py-1 rounded-full ${openTickets > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'} whitespace-nowrap">
+                                                ${openTickets} Open
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-4 line-clamp-2 h-10">${description}</p>
+                                    
+                                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] uppercase text-gray-400 font-semibold tracking-wide mb-1">Active Members</span>
+                                            ${avatarsHtml}
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-xs text-gray-500">Total Tickets</div>
+                                            <div class="font-semibold text-gray-900">${projectTickets.length}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" data-project-id="${p.id}" class="project-card block bg-gray-50 hover:bg-teal-50 border-t border-gray-200 p-3 text-center text-sm font-medium text-teal-600 transition-colors">
+                                    View Project Details &rarr;
+                                </a>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // --- UNIFIED DASHBOARD LAYOUT FOR BOTH ADMIN AND USER ---
+                // Removed the Sidebar logic completely.
+                
+                const projectList = document.getElementById('project-list') || document.createElement('div');
+                projectList.id = 'project-list';
+                projectList.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+                projectList.innerHTML = projectCardsHtml;
+                
+                dashboardView.innerHTML = `
+                    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 id="dashboard-title" class="text-3xl font-bold text-gray-900">Projects</h2>
+                            <button id="show-new-project-form" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
+                                <svg class="h-5 w-5 mr-2 -ml-1"><use href="#icon-plus"></use></svg>
+                                Create New Project
+                            </button>
+                        </div>
+                        ${projectList.outerHTML}
+                    </div>
+                `;
+            },
+            // NEW: Render Project Detail View
+            renderProjectDetail() {
+                const { currentUser, tickets, selectedProjectId } = this.state;
+                const project = this.getProject(selectedProjectId);
+                if (!project) {
+                    this.showToast('Could not find project.');
+                    this.navigate('dashboard');
+                    return;
+                }
+                document.getElementById('project-detail-title').innerText = project.name;
+                
+                const projectTickets = tickets.filter(t => t.projectId === selectedProjectId);
+                let visibleTickets = projectTickets;
+                if (currentUser.role === 'User') {
+                    // Users only see their own tickets within a project
+                    visibleTickets = projectTickets.filter(t => t.createdByUserId === currentUser.id);
+                }
+                const activeTickets = visibleTickets.filter(t => t.status !== 'Closed' && t.status !== 'Cancelled');
+                const closedTickets = visibleTickets.filter(t => t.status === 'Closed' || t.status === 'Cancelled');
+                const content = document.getElementById('project-ticket-lists');
+                content.innerHTML = `
+                    ${this.buildTicketList('Active Tickets', activeTickets)}
+                    ${this.buildTicketList('Closed Tickets', closedTickets)}
+                `;
+            },
+            buildTicketList(title, ticketList) {
+                const visibleTickets = ticketList.filter(t => this.state.currentUser.role !== 'User' || t.type === 'External');
+                
+                if (visibleTickets.length === 0) {
+                     return `<section><h3 class="text-xl font-semibold text-gray-800 mb-4">${title}</h3><div class="p-8 text-center bg-white rounded-xl border border-gray-200"><svg class="h-12 w-12 text-gray-400 mx-auto"><use href="#icon-inbox"></use></svg><h4 class="mt-2 text-lg font-medium text-gray-900">No tickets found.</h4><p class="text-sm text-gray-500">There are no tickets in this category.</p></div></section>`;
+                }
+                
+                const listHtml = visibleTickets.map(t => {
+                    const isOverdue = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Closed' && t.status !== 'Cancelled';
+                    const dueDateStr = t.dueDate ? `<span class="flex items-center text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-500'}"><svg class="h-4 w-4 mr-1"><use href="#icon-calendar"></use></svg>Due: ${this.formatDate(t.dueDate)} ${isOverdue ? '(Overdue)' : ''}</span>` : '';
+                    
+                    return `
+                    <a href="#" data-ticket-id="${t.id}" class="ticket-list-item block bg-white p-4 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl hover:border-teal-300 transition-all duration-200">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                            <div>
+                                <h4 class="text-lg font-semibold text-teal-600">${t.subject} (${t.id})</h4>
+                                <p class="text-sm text-gray-600">Created by: ${this.getUser(t.createdByUserId).name} ${t.type === 'Internal' ? '<span class="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Internal</span>' : ''}</p>
+                            </div>
+                            <div class="flex flex-row sm:flex-col items-end gap-2">
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${this.getStatusColor(t.status)}">${t.status}</span>
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityColor(t.priority)}">${t.priority}</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <span class="text-sm text-gray-500">Assigned to: <span class="font-medium text-gray-700">${this.getUser(t.assignedToUserId).name}</span></span>
+                            <div class="flex items-center gap-4">
+                                ${dueDateStr}
+                                <span class="text-sm text-gray-500">${this.timeAgo(t.createdAt)}</span>
+                            </div>
+                        </div>
+                    </a>`;
+                }).join('<div class="my-4"></div>');
+                return `<section><h3 class="text-xl font-semibold text-gray-800 mb-4">${title}</h3><div class="space-y-4">${listHtml}</div></section>`;
+            },
+            renderTicketDetail() {
+                const ticket = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                if (!ticket) return this.navigate('dashboard');
+                const isOverdue = ticket.dueDate && new Date(ticket.dueDate) < new Date() && t.status !== 'Closed';
+                document.getElementById('ticket-detail-header').innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-2xl font-bold text-gray-900">${ticket.subject}</h2>
+                        <span class="text-sm font-semibold px-3 py-1 rounded-full ${this.getStatusColor(ticket.status)} flex-shrink-0 ml-4">${ticket.status}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">ID: <span class="font-medium">${ticket.id}</span></p>
+                `;
+                document.getElementById('ticket-detail-sidebar').innerHTML = `
+                    ${this.buildWorkflowActions(ticket)}
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Details</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-600">Priority:</span><span class="font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityColor(ticket.priority)}">${ticket.priority}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Due Date:</span><span class="font-medium ${isOverdue ? 'text-red-600' : 'text-gray-900'}">${this.formatDate(ticket.dueDate)}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Project:</span><span class="font-medium text-gray-900">${this.getProject(ticket.projectId).name}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Created By:</span><span class="font-medium text-gray-900">${this.getUser(ticket.createdByUserId).name}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Assigned To:</span><span class="font-medium text-gray-900">${this.getUser(ticket.assignedToUserId).name}</span></div>
+                        </div>
+                    </div>
+                `;
+                this.renderTicketTabs(ticket);
+            },
+            // --- RENDER TICKET TABS (NOW INCLUDES QUILL) ---
+            renderTicketTabs(ticket) {
+                const activeTab = this.state.activeTicketTab;
+                const tabs = [
+                    { id: 'conversation', label: 'Conversation', icon: 'icon-message-square' },
+                    { id: 'resolution', label: 'Resolution', icon: 'icon-check-square' },
+                    { id: 'timeentry', label: 'Time Entry', icon: 'icon-clock' },
+                    { id: 'attachments', label: 'Attachments', icon: 'icon-paperclip' },
+                    { id: 'approval', label: 'Approval', icon: 'icon-thumbs-up' },
+                    { id: 'history', label: 'History', icon: 'icon-history' },
+                ];
+                document.getElementById('ticket-tab-nav').innerHTML = tabs.map(tab => `
+                    <button data-tab="${tab.id}" class="ticket-tab-button flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 ${tab.id === activeTab ? 'active' : ''}">
+                        <svg class="h-4 w-4"><use href="#${tab.icon}"></use></svg>${tab.label}
+                    </button>
+                `).join('');
+                let tabContentHtml = '';
+                if (activeTab === 'conversation') {
+                    // --- THIS IS THE NEW QUILL EDITOR HTML ---
+                    tabContentHtml = `
+                        <div id="comment-list" class="space-y-4 max-h-96 overflow-y-auto comment-scrollbar p-1">${this.buildCommentList(ticket.comments)}</div>
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <div id="comment-toolbar">
+                                <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-list" value="ordered"></button>
+                                    <button class="ql-list" value="bullet"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-link"></button>
+                                    <button class="ql-image"></button>
+                                    <button class="ql-clean"></button>
+                                </span>
+                            </div>
+                            <div id="comment-editor"></div>
+                            
+                            <div class="flex justify-between items-center mt-3">
+                                <div>
+                                    <label for="file-upload" class="format-button p-2 rounded hover:bg-gray-100 cursor-pointer inline-block" title="Attach File (demo)">
+                                        <svg class="h-5 w-5 text-gray-600"><use href="#icon-paperclip"></use></svg>
+                                    </label>
+                                    <input type="file" id="file-upload" multiple class="hidden">
+                                </div>
+                                <button id="submit-comment-btn" class="h-10 px-4 py-2 flex-shrink-0 flex items-center justify-center bg-teal-600 text-white rounded-md hover:bg-teal-700 shadow-sm text-sm font-medium">
+                                    Comment
+                                </button>
+                            </div>
+                            <div id="attachment-previews" class="px-1 pt-3 text-sm"></div>
+                        </div>`;
+                    // --- END OF NEW CODE ---
+                } else if (activeTab === 'resolution') {
+                    tabContentHtml = this.buildResolutionTab(ticket);
+                } else if (activeTab === 'timeentry') {
+                    tabContentHtml = this.buildTimeEntryTab(ticket);
+                } else if (activeTab === 'history') {
+                    tabContentHtml = `<div id="history-list" class="space-y-4 max-h-96 overflow-y-auto comment-scrollbar p-1">${this.buildHistoryList(ticket.history)}</div>`;
+                } else {
+                    tabContentHtml = `<div class="p-8 text-center rounded-md border-2 border-dashed border-gray-300"><h4 class="mt-2 text-lg font-medium text-gray-900">Backend Required</h4><p class="text-sm text-gray-500 mt-1">This feature (${activeTab}) requires a database connection.</p></div>`;
+                }
+                document.getElementById('ticket-tab-content').innerHTML = tabContentHtml;
+                // --- NEW: Initialize Quill AFTER setting HTML ---
+                if (activeTab === 'conversation') {
+                    this.initializeQuill();
+                }
+            },
+            // --- NEW: INITIALIZE QUILL EDITOR ---
+            initializeQuill() {
+                // Ensure Quill is loaded and not already initialized
+                if (typeof Quill === 'undefined') {
+                    console.error("Quill library is not loaded.");
+                    return;
+                }
+                // FIX: Check if instance *already exists* for this specific editor ID
+                if (document.getElementById('comment-editor') && !this.state.quillInstance) {
+                    const quill = new Quill('#comment-editor', {
+                        modules: {
+                            // FIX: Correct toolbar setup
+                            toolbar: {
+                                container: '#comment-toolbar',
+                                handlers: {
+                                    'link': () => this.handleQuillLink(),
+                                    'image': () => this.handleQuillImage()
+                                }
+                            }
+                        },
+                        placeholder: 'Add a comment...',
+                        theme: 'snow'
+                    });
+                    this.state.quillInstance = quill; // Store it
+                }
+            },
+            
+            // --- NEW: Custom handlers for Quill buttons ---
+            handleQuillLink() {
+                const quill = this.state.quillInstance;
+                if (!quill) return;
+                const range = quill.getSelection(true); // Get selection, or current cursor
+                const text = quill.getText(range.index, range.length);
+                this.state.quillSelection = range; // Save selection
+                
+                document.getElementById('modal-link-text').value = text;
+                document.getElementById('modal-link-url').value = '';
+                document.getElementById('insert-link-modal').classList.remove('hidden');
+                document.getElementById('modal-link-url').focus();
+            },
+            handleQuillImage() {
+                this.showToast('Image uploads are not supported in this demo.', false);
+            },
+            buildCommentList(comments) {
+                if (comments.length === 0) return '<p class="text-sm text-gray-500 text-center">No comments yet.</p>';
+                return comments.map(c => {
+                    const user = this.getUser(c.userId);
+                    // NEW: Render the HTML from Quill
+                    const commentHTML = c.isHtml ? c.text : `<p>${c.text.replace(/\n/g, '<br>')}</p>`; // Basic formatting for old text
+                    return `<div class="flex items-start gap-3">
+                        <img src="https://placehold.co/40x40/e2e8f0/64748b?text=${user.name.charAt(0)}" alt="${user.name}" class="h-10 w-10 rounded-full flex-shrink-0">
+                        <div class="flex-grow bg-gray-100 p-3 rounded-lg"><div class="flex justify-between"><span class="font-semibold text-sm text-gray-800">${user.name}</span><span class="text-xs text-gray-500">${this.timeAgo(c.timestamp)}</span></div>
+                        <div class="text-sm text-gray-700 mt-1 ql-snow" style="border:none;">
+                            <div class="ql-editor static-content">${commentHTML}</div>
+                        </div>
+                        </div>
+                    </div>`
+                }).join('');
+            },
+            buildHistoryList(history) {
+                if (!history) return '<p class="text-sm text-gray-500 text-center">No history.</p>';
+                // FIX: Add userName to history entries
+                const populatedHistory = history.map(h => ({
+                    ...h,
+                    userName: h.userName || this.getUser(h.userId).name
+                }));
+                
+                return [...populatedHistory].reverse().map(h => `<div class="flex items-center gap-3">
+                    <img src="https://placehold.co/32x32/e2e8f0/64748b?text=${h.userName ? h.userName.charAt(0) : '?'}" alt="${h.userName}" class="h-8 w-8 rounded-full flex-shrink-0">
+                    <div class="flex-grow"><p class="text-sm"><span class="font-semibold text-gray-800">${h.userName || 'System'}</span> <span class="text-gray-600">${h.action}</span></p><p class="text-xs text-gray-500">${this.timeAgo(h.timestamp)}</p></div>
+                </div>`).join('<hr class="my-3">');
+            },
+            buildResolutionTab(ticket) {
+                if (ticket.status === 'Closed' && ticket.resolution) return `<h3 class="text-lg font-semibold mb-3">Final Resolution</h3><div class="bg-gray-50 p-4 rounded-md border border-gray-200"><p class="text-gray-700 whitespace-pre-wrap">${ticket.resolution}</p></div>`;
+                if (ticket.status === 'Closed') return '<p class="text-center text-gray-500">This ticket was closed without a formal resolution.</p>';
+                if (this.state.currentUser.id !== ticket.assignedToUserId && this.state.currentUser.role !== 'Admin') return '<p class="text-center text-gray-500">Awaiting resolution from the assigned agent.</p>';
+                return `<form id="resolution-form"><label class="block text-sm font-medium text-gray-700 mb-1">Add Resolution & Close Ticket</label><textarea id="resolution-text" rows="5" class="w-full rounded-md border border-gray-300 p-2 mb-3" required></textarea><button type="submit" class="h-10 px-4 bg-green-600 text-white rounded-md text-sm font-medium">Save Resolution & Close</button></form>`;
+            },
+            buildTimeEntryTab(ticket) {
+                const list = ticket.timeEntries.length ? ticket.timeEntries.map(e => `<div class="p-3 bg-gray-50 rounded-lg border border-gray-200"><div class="flex justify-between"><span class="font-semibold text-sm">${this.getUser(e.userId).name} logged ${e.hours}h</span><span class="text-xs text-gray-500">${this.formatDate(e.date)}</span></div><p class="text-sm text-gray-700">${e.description}</p></div>`).join('<div class="my-3"></div>') : '<p class="text-center text-gray-500">No time logged.</p>';
+                const form = (this.state.currentUser.role === 'Admin' || this.state.currentUser.id === ticket.assignedToUserId) ? `<div class="mt-6 pt-6 border-t border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-3">Log Time</h3><form id="time-entry-form" class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="text-sm">Hours</label><input type="number" id="time-entry-hours" step="0.1" min="0.1" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></div><div><label class="text-sm">Date</label><input type="date" id="time-entry-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}" required></div></div><div><label class="text-sm">Description</label><input type="text" id="time-entry-description" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></div><div class="text-right"><button type="submit" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium">Log Time</button></div></form></div>` : '';
+                return `<h3 class="text-lg font-semibold text-gray-800 mb-4">Time Log</h3><div class="space-y-3 max-h-60 overflow-y-auto comment-scrollbar p-1">${list}</div>${form}`;
+            },
+            buildWorkflowActions(ticket) {
+                const { currentUser } = this.state;
+                let html = '';
+                if (currentUser.role === 'Admin' && ['New', 'Re-opened'].includes(ticket.status)) {
+                    const options = this.state.users.filter(u => u.role !== 'User').map(u => `<option value="${u.id}">${u.name} (${u.role})</option>`).join('');
+                    html = `<label class="block text-sm font-medium">Assign Ticket</label><div class="flex gap-2"><select id="assign-user" class="flex-grow h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"><option value="">Select a user...</option>${options}</select><button id="assign-user-button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium">Assign</button></div>`;
+                }
+                if (currentUser.id === ticket.assignedToUserId) {
+                    if (['Assigned', 'Re-opened', 'On Hold'].includes(ticket.status)) html += `<button data-status="In Progress" class="workflow-action-button w-full h-10 px-4 py-2 bg-yellow-500 text-white rounded-md text-sm font-medium">Start/Resume Work</button>`;
+                    if (ticket.status === 'In Progress') html += `<button data-status="On Hold" class="workflow-action-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium mt-2">Put On Hold</button>`;
+                }
+                if (html === '') html = '<p class="text-sm text-gray-500 text-center">No actions available.</p>';
+                return `<div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-4">Workflow Actions</h3><div class="space-y-3">${html}</div></div>`;
+            },
+            renderNewProjectForm() {
+                // Just clear the form
+                document.getElementById('new-project-form').reset();
+            },
+            renderNewTicketForm() {
+                const { currentUser, selectedProjectId } = this.state;
+                const project = this.getProject(selectedProjectId);
+                document.getElementById('new-ticket-form').reset();
+                document.getElementById('new-ticket-name').value = currentUser.name;
+                document.getElementById('new-ticket-email').value = currentUser.email;
+                
+                // Set and show the selected project
+                document.getElementById('new-ticket-project-wrapper').classList.remove('hidden');
+                document.getElementById('new-ticket-project-name').value = project.name;
+                document.getElementById('internal-ticket-toggle').classList.toggle('hidden', this.state.currentUser.role !== 'Admin');
+                document.getElementById('new-ticket-due-date').min = new Date().toISOString().split('T')[0];
+            },
+            // --- ACTION HANDLERS ---
+            onLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const user = this.state.users.find(u => u.email === email && u.password === password);
+                const errorEl = document.getElementById('login-error');
+                if (user) {
+                    this.state.currentUser = user;
+                    this.navigate('dashboard');
+                    this.render();
+                } else {
+                    errorEl.innerText = 'Invalid email or password.';
+                    errorEl.classList.remove('hidden');
+                }
+            },
+            
+            onLogout() {
+                this.state.currentUser = null;
+                this.navigate('auth-login');
+                this.renderHeader();
+            },
+            onNewProjectSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const projectName = form['new-project-name'].value;
+                const projectDesc = form['new-project-description'].value;
+                const projectType = form['new-project-type'].value;
+                
+                if (!projectName) {
+                    this.showToast('Project Name is required.');
+                    return;
+                }
+                const newProject = {
+                    id: `p-${Date.now().toString().slice(-4)}`,
+                    name: projectName,
+                    type: projectType, // Save the project type
+                    description: projectDesc // You can add this to the card later
+                };
+                
+                this.state.projects.push(newProject);
+                this.navigate('dashboard');
+                this.renderDashboard();
+            },
+            onNewTicketSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const newTicket = {
+                    id: `T-${Date.now().toString().slice(-4)}`,
+                    subject: form['new-ticket-subject'].value,
+                    projectId: this.state.selectedProjectId, // Use state, not form
+                    createdByUserId: this.state.currentUser.id,
+                    type: this.state.currentUser.role === 'Admin' && form['new-ticket-internal'].checked ? 'Internal' : 'External',
+                    status: 'New',
+                    priority: form['new-ticket-priority'].value,
+                    description: form['new-ticket-description'].value,
+                    assignedToUserId: null,
+                    createdAt: new Date().toISOString(),
+                    dueDate: form['new-ticket-due-date'].value || null,
+                    resolution: null, timeEntries: [], comments: [], history: []
+                };
+                
+                const user = this.getUser(this.state.currentUser.id);
+                // FIX: Add userName to history
+                newTicket.history.push({ userId: user.id, userName: user.name, action: 'created the ticket', timestamp: newTicket.createdAt });
+                newTicket.comments.push({ userId: user.id, text: `<p>Ticket Created. Description: ${newTicket.description.substring(0, 50)}...</p>`, isHtml: true, timestamp: newTicket.createdAt });
+                
+                this.state.tickets.unshift(newTicket);
+                this.state.users.filter(u => u.role === 'Admin' && u.id !== user.id).forEach(admin => this.createNotification(admin.id, `New ticket ${newTicket.id} by ${user.name}`));
+                
+                this.navigate('project-detail');
+                this.renderProjectDetail();
+            },
+            // --- NEW: ADD COMMENT (USES QUILL) ---
+            onAddComment() {
+                const quill = this.state.quillInstance;
+                if (!quill) return;
+                const text = quill.root.innerHTML; // Get HTML content
+                if (quill.getLength() <= 1) { // Check if editor is empty
+                    this.showToast("Cannot submit an empty comment.");
+                    return;
+                }
+                const t = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                if (!t) return;
+                
+                t.comments.push({
+                    userId: this.state.currentUser.id,
+                    text: text, // Save the HTML
+                    isHtml: true, // Add a flag to know to render HTML
+                    timestamp: new Date().toISOString()
+                });
+                this.logHistory(t.id, this.state.currentUser.id, 'added a comment');
+                
+                // --- CRITICAL FIX START: DO NOT DESTROY EDITOR ON COMMENT ---
+                
+                // 1. Update list UI manually
+                const commentListEl = document.getElementById('comment-list');
+                if (commentListEl) {
+                    commentListEl.innerHTML = this.buildCommentList(t.comments);
+                    commentListEl.scrollTop = commentListEl.scrollHeight; // Scroll to bottom
+                }
+                
+                // 2. Clear editor content
+                quill.setText(''); 
+                
+                // 3. Clear attachments
+                document.getElementById('attachment-previews').innerHTML = '';
+                document.getElementById('file-upload').value = null;
+
+                // 4. Handle Status Logic (Only re-render if status changes)
+                if (this.state.currentUser.role === 'User' && t.status === 'On Hold') {
+                    t.status = 'In Progress';
+                    this.logHistory(t.id, this.state.currentUser.id, 'changed status to In Progress (client replied)');
+                    if(t.assignedToUserId) this.createNotification(t.assignedToUserId, `Ticket ${t.id} resumed by client.`);
+                    
+                    // If status changed, we MUST re-render the whole view to update sidebar buttons
+                    this.state.quillInstance = null; // Clean up old instance ref
+                    this.renderTicketDetail(); 
+                } 
+                // If status didn't change, do nothing else! The editor stays alive.
+                
+                // --- CRITICAL FIX END ---
+            },
+            // --- NEW: HELPER TO SIMULATE FILE ATTACHMENT ---
+            handleFileAttachment(event) {
+                const files = event.target.files;
+                if (!files || files.length === 0) return;
+                const previewContainer = document.getElementById('attachment-previews');
+                let fileListHtml = '<h4 class="font-semibold text-gray-700 mb-1">Attachments:</h4><ul class="list-disc pl-5">';
+                
+                for (const file of files) {
+                    fileListHtml += `<li class="text-gray-600">${file.name} <span class="text-gray-400">(${(file.size / 1024).toFixed(1)} KB)</span></li>`;
+                }
+                
+                fileListHtml += '</ul>';
+                previewContainer.innerHTML = fileListHtml;
+            },
+            // --- DELEGATED EVENT LISTENERS ---
+            initListeners() {
+                // Auth
+                document.getElementById('login-form').onsubmit = (e) => this.onLogin(e);
+                document.getElementById('signup-form').onsubmit = (e) => { e.preventDefault(); this.showToast('Signup is disabled in this demo.', false); };
+                document.getElementById('forgot-form').onsubmit = (e) => { 
+                    e.preventDefault(); 
+                    this.showToast('Reset link sent (simulation).', false); 
+                    document.getElementById('forgot-success').classList.remove('hidden'); // Keep text for consistency
+                    document.getElementById('forgot-success').innerText = 'Reset link sent (simulation).';
+                };
+                document.querySelectorAll('.demo-login-button').forEach(b => b.onclick = () => { document.getElementById('login-email').value = b.dataset.email; document.getElementById('login-password').value = b.dataset.password; document.getElementById('login-form').dispatchEvent(new Event('submit')); });
+                ['show-signup-form', 'show-forgot-form', 'show-login-form-from-signup', 'show-login-form-from-forgot'].forEach(id => {
+                    document.getElementById(id).onclick = (e) => { e.preventDefault(); this.navigate(e.target.id.includes('signup') ? 'auth-signup' : e.target.id.includes('forgot') ? 'auth-forgot-password' : 'auth-login'); };
+                });
+                // App Navigation
+                // Note: show-new-project-form is now dynamic, handled in delegation
+                
+                // NEW: Back button logic updated
+                document.getElementById('back-to-projects').onclick = () => this.navigate('dashboard');
+                document.getElementById('back-to-project-detail').onclick = () => this.navigate('project-detail');
+                
+                ['cancel-new-project', 'cancel-new-project-form'].forEach(id => document.getElementById(id).onclick = () => this.navigate('dashboard'));
+                ['cancel-new-ticket', 'cancel-new-ticket-form'].forEach(id => document.getElementById(id).onclick = () => this.navigate('project-detail'));
+                
+                // Main App Event Delegation
+                const appContainer = document.getElementById('app-container');
+                
+                // Click Handler
+                appContainer.addEventListener('click', (e) => {
+                    // NEW: Project card click
+                    const projectCard = e.target.closest('.project-card');
+                    if (projectCard) {
+                        e.preventDefault();
+                        this.state.selectedProjectId = projectCard.dataset.projectId;
+                        this.navigate('project-detail');
+                        this.renderProjectDetail();
+                        return;
+                    }
+                    // NEW: Create ticket button (now in project view)
+                    const createTicketBtn = e.target.closest('#show-new-ticket-form');
+                    if (createTicketBtn) {
+                         this.navigate('new-ticket');
+                         this.renderNewTicketForm();
+                         return;
+                    }
+                    const tItem = e.target.closest('.ticket-list-item');
+                    if (tItem) { e.preventDefault(); this.state.selectedTicketId = tItem.dataset.ticketId; this.navigate('ticket-detail'); this.renderTicketDetail(); return; }
+                    
+                    const tabBtn = e.target.closest('.ticket-tab-button');
+                    if (tabBtn) { e.preventDefault(); this.state.activeTicketTab = tabBtn.dataset.tab; this.renderTicketTabs(this.state.tickets.find(t => t.id === this.state.selectedTicketId)); return; }
+                    const assignBtn = e.target.closest('#assign-user-button');
+                    if (assignBtn) {
+                        const uid = document.getElementById('assign-user').value;
+                        if (!uid) return this.showToast('Please select a user to assign.');
+                        const t = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                        t.status = 'Assigned'; t.assignedToUserId = uid;
+                        this.logHistory(t.id, this.state.currentUser.id, `assigned to ${this.getUser(uid).name}`);
+                        this.createNotification(uid, `Ticket ${t.id} has been assigned to you.`);
+                        this.renderTicketDetail(); return;
+                    }
+                    
+                    const workflowBtn = e.target.closest('.workflow-action-button');
+                    if (workflowBtn) {
+                        const t = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                        t.status = workflowBtn.dataset.status;
+                        this.logHistory(t.id, this.state.currentUser.id, `changed status to ${t.status}`);
+                        this.renderTicketDetail(); return;
+                    }
+                    // --- NEW: SUBMIT COMMENT BUTTON ---
+                    const submitCommentBtn = e.target.closest('#submit-comment-btn');
+                    if (submitCommentBtn) {
+                        this.onAddComment();
+                        return;
+                    }
+                    // NEW: Dynamic create project button (for admin/non-admin)
+                    const createProjectBtn = e.target.closest('#show-new-project-form');
+                    if (createProjectBtn) {
+                        this.navigate('new-project');
+                        this.renderNewProjectForm();
+                        return;
+                    }
+                });
+                // Submit Handler
+                appContainer.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    // FIX: This check needs to be first
+                    if (e.target.id === 'new-project-form') {
+                        this.onNewProjectSubmit(e);
+                        return;
+                    }
+                    
+                    // NEW/FIX: Added this check for the new ticket form
+                    if (e.target.id === 'new-ticket-form') {
+                        this.onNewTicketSubmit(e);
+                        return;
+                    }
+                    
+                    const t = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                    // This check is now safe
+                    if (!t) return;
+                    
+                    if (e.target.id === 'resolution-form') {
+                        t.resolution = document.getElementById('resolution-text').value;
+                        t.status = 'Closed';
+                        this.logHistory(t.id, this.state.currentUser.id, 'added resolution and closed ticket');
+                        this.renderTicketDetail();
+                    }
+                    if (e.target.id === 'time-entry-form') {
+                        const hours = document.getElementById('time-entry-hours').value;
+                        t.timeEntries.push({ userId: this.state.currentUser.id, hours: hours, date: document.getElementById('time-entry-date').value, description: document.getElementById('time-entry-description').value });
+                        this.logHistory(t.id, this.state.currentUser.id, `logged ${hours} hours`);
+                        this.renderTicketTabs(t);
+                    }
+                });
+                
+                // --- NEW: FILE UPLOAD LISTENER ---
+                // We must attach this listener to the app-container because the form is dynamic
+                appContainer.addEventListener('change', (e) => {
+                    if (e.target.id === 'file-upload') {
+                        this.handleFileAttachment(e);
+                    }
+                });
+                // --- NEW: MODAL LISTENERS (in global scope) ---
+                const modal = document.getElementById('insert-link-modal');
+                document.getElementById('modal-close-btn').onclick = () => modal.classList.add('hidden');
+                document.getElementById('modal-cancel-btn').onclick = () => modal.classList.add('hidden');
+                document.getElementById('modal-insert-btn').onclick = () => {
+                    const text = document.getElementById('modal-link-text').value;
+                    const url = document.getElementById('modal-link-url').value;
+                    if (!url) {
+                        this.showToast('Please enter a URL.');
+                        return;
+                    }
+                    
+                    const quill = this.state.quillInstance;
+                    const range = this.state.quillSelection;
+                    
+                    if (quill && range) {
+                        // Insert the link at the saved selection
+                        quill.deleteText(range.index, range.length); // Delete selected text (if any)
+                        quill.insertText(range.index, text || url, 'link', url);
+                        quill.setSelection(range.index + (text || url).length, 0); // Move cursor to end
+                    }
+                    modal.classList.add('hidden');
+                };
+            },
+            start() {
+                // FIX: Populate userName for all mock history data on start
+                this.state.tickets.forEach(t => {
+                    // Ensure history exists
+                    if (!t.history) t.history = [];
+                    t.history.forEach(h => {
+                        if (h.userId && !h.userName) { // Check if userId exists
+                            h.userName = this.getUser(h.userId).name;
+                        }
+                    });
+                });
+                
+                this.initListeners();
+                this.render();
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => app.start());
+    </script>
+</body>
+</html>

@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Help Desk Workflow</title>
+    <!-- 1. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 3. Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Default app background */
+        }
+        /* Dark mode background */
+        .dark body {
+            background-color: #111827; /* gray-900 */
+        }
+        /* Custom scrollbar for comment sections */
+        .comment-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .comment-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .comment-scrollbar::-webkit-scrollbar-track {
+            background-color: #f1f5f9;
+        }
+        
+        /* --- Page View Transitions --- */
+        /* Ensure only the active view is visible. Use !important to override utility classes
+           like Tailwind's `.flex` which can otherwise make a hidden view display. */
+        .view {
+            display: none !important;
+        }
+        .view.active {
+            display: block !important;
+            animation: fadeIn 0.3s ease-out;
+        }
+        /* The auth view uses flex utilities to center content — preserve that when active */
+        #auth-view.view.active {
+            display: flex !important;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Login Page Animations --- */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-gradient {
+            background: linear-gradient(-45deg, #f0fdfa, #ccfbf1, #a7f3d0, #0d9488);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 30px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        .animate-fadeInUp {
+            /* Graceful default: keep element visible if animation is delayed
+               Animation still runs when present, but we avoid forcing opacity:0
+               which can leave elements invisible if an animation-delay or JS
+               timing prevents the animation from running. */
+            opacity: 1;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* --- UI Element Transitions --- */
+        button, input, select, textarea, a {
+            transition: all 0.2s ease-in-out;
+        }
+        button:hover, a:hover {
+            transform: translateY(-1px); /* Subtle lift */
+        }
+        button:active, a:active {
+            transform: translateY(0);
+        }
+        /* Teal focus ring */
+        input:focus, select:focus, textarea:focus, button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+            border-color: #0d9488; /* Teal-700 */
+        }
+        /* Specific fix for select focus */
+        select:focus {
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+            border-color: #0d9488;
+        }
+        /* Fix for button focus ring */
+        button:focus {
+            outline: none;
+        }
+        button:focus-visible {
+             outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+            border-color: #0d9488; /* Teal-700 */
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- ICONS (Inlined SVGs to avoid external files) -->
+    <svg width="0" height="0" class="hidden">
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-ticket-logo">
+            <path d="M14 6l5 5V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7.5L14 6z"></path>
+            <path d="M9 18h6"></path><path d="M9 14h6"></path><path d="M9 10h3"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-calendar">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-bell">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-plus">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-arrow-left">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-inbox">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-send">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-ticket">
+            <path d="M14 6l5 5V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7.5L14 6z"></path>
+            <path d="M9 18h6"></path><path d="M9 14h6"></path><path d="M9 10h3"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-briefcase">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-check-circle">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-log-out">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-moon">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </symbol>
+        <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-sun">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </symbol>
+    </svg>
+
+    <!-- AUTHENTICATION VIEW (Full Screen) -->
+    <div id="auth-view" class="view active min-h-screen animated-gradient flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            
+            <!-- Logo Header -->
+            <div class="text-center mb-6 animate-fadeInUp" style="animation-delay: 0s;">
+                <svg class="h-12 w-12 text-teal-700 dark:text-teal-500 mx-auto"><use href="#icon-ticket-logo"></use></svg>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">Workflow Help Desk</h1>
+            </div>
+
+            <!-- VIEW 4: LOGIN FORM -->
+            <!-- **** FIX: Removed 'active' class from here. JS will add it. **** -->
+            <div id="login-view" class="auth-card view animate-fadeInUp" style="animation-delay: 0.1s;">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Welcome Back</h2>
+                    <div id="login-error" class="hidden p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md text-sm"></div>
+                    <form id="login-form" class="space-y-4">
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                            <input type="email" id="login-email" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                            <input type="password" id="login-password" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <div class="text-sm text-right">
+                            <a href="#" id="show-forgot-form" class="font-medium text-teal-600 dark:text-teal-400 hover:underline">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                            Log In
+                        </button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600">
+                        Don't have an account? <a href="#" id="show-signup-form" class="font-medium text-teal-600 hover:underline">Sign up</a>
+                    </p> <!-- dark:text-gray-400 and dark:text-teal-400 for link -->
+                </div>
+
+                <!-- Demo Login Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8 mt-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <h3 class="text-lg font-semibold text-center text-gray-800 dark:text-gray-200 mb-4">Easy Demo Logins</h3>
+                    <div class="space-y-3">
+                        <button data-email="bob@admin.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-700 text-white rounded-md text-sm font-medium hover:bg-gray-800 shadow-sm">
+                            Log in as Admin (Bob)
+                        </button>
+                        <button data-email="charlie@tech.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">
+                            Log in as Tech Dept (Charlie)
+                        </button>
+                         <button data-email="dana@billing.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">
+                            Log in as Billing Dept (Dana)
+                        </button>
+                        <button data-email="alice@client.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium hover:bg-gray-600 shadow-sm">
+                            Log in as Client (Alice)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 5: SIGNUP FORM -->
+            <div id="signup-view" class="auth-card view animate-fadeInUp">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Create an Account</h2>
+                    <div id="signup-error" class="hidden p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md text-sm"></div>
+                    <form id="signup-form" class="space-y-4">
+                        <div>
+                            <label for="signup-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                            <input type="text" id="signup-name" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="signup-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                            <input type="email" id="signup-email" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <div>
+                            <label for="signup-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                            <input type="password" id="signup-password" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                            Create Account
+                        </button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600 dark:text-gray-400">
+                        Already have an account? <a href="#" id="show-login-form-from-signup" class="font-medium text-teal-600 dark:text-teal-400 hover:underline">Log in</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- VIEW 6: FORGOT PASSWORD FORM -->
+            <div id="forgot-password-view" class="auth-card view animate-fadeInUp">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-gray-100">Reset Password</h2>
+                    <div id="forgot-success" class="hidden p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-md text-sm"></div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center">Enter your email and we'll send you instructions to reset your password. (This is a simulation).</p>
+                    <form id="forgot-form" class="space-y-4">
+                        <div>
+                            <label for="forgot-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                            <input type="email" id="forgot-email" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                            Send Reset Link
+                        </button>
+                    </form>
+                    <p class="text-sm text-center text-gray-600 dark:text-gray-400">
+                        Remembered your password? <a href="#" id="show-login-form-from-forgot" class="font-medium text-teal-600 dark:text-teal-400 hover:underline">Log in</a>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- MAIN APPLICATION VIEW (Hidden by default) -->
+    <div id="main-app-view" class="view">
+        <!-- HEADER / NAVIGATION -->
+        <nav class="bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/50 w-full sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <!-- Left Side: Title -->
+                    <div class="flex items-center gap-4">
+                        <svg class="h-6 w-6 text-teal-600"><use href="#icon-ticket-logo"></use></svg>
+                        <h1 class="text-xl font-bold text-teal-600">Workflow Help Desk</h1>
+                    </div>
+
+                    <!-- Right Side: Notifications & Auth -->
+                    <div id="nav-right-side" class="flex items-center gap-4">
+                        <!-- This content will be populated by JS based on login state -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- VIEW 1: DASHBOARD -->
+            <div id="dashboard-view" class="app-view view">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="dashboard-title" class="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h2>
+                    <button id="show-new-ticket-form" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
+                        <svg class="h-5 w-5 mr-2 -ml-1"><use href="#icon-plus"></use></svg>
+                        Create New Ticket
+                    </button>
+                </div>
+                
+                <!-- Stat Cards -->
+                <div id="dashboard-stats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- Stats will be populated by JS -->
+                </div>
+                
+                <!-- Dynamic Dashboard Content (Ticket Lists) -->
+                <div id="dashboard-content" class="space-y-8">
+                    <!-- Content will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW 2: TICKET DETAILS -->
+            <div id="ticket-detail-view" class="app-view view">
+                <button id="back-to-dashboard" class="flex items-center text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to Dashboard
+                </button>
+                <div id="ticket-detail-content" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Content will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW 3: NEW TICKET FORM -->
+            <div id="new-ticket-view" class="app-view view">
+                <button id="cancel-new-ticket" class="flex items-center text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline mb-4">
+                    <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg>
+                    Back to Dashboard
+                </button>
+                <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Create a New Ticket</h2>
+                    </div>
+                    <form id="new-ticket-form" class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="new-ticket-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
+                                <input type="text" id="new-ticket-name" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-3 py-2 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed" readonly>
+                            </div>
+                            <div>
+                                <label for="new-ticket-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Email</label>
+                                <input type="email" id="new-ticket-email" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-3 py-2 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="new-ticket-project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project</label>
+                                <select id="new-ticket-project" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                                    <!-- Project options populated by JS -->
+                                </select>
+                            </div>
+                            <div>
+                                <label for="new-ticket-priority" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
+                                <select id="new-ticket-priority" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" required>
+                                    <option>Low</option>
+                                    <option>Medium</option>
+                                    <option>High</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="new-ticket-subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                                <input type="text" id="new-ticket-subject" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" placeholder="e.g., Website is down" required>
+                            </div>
+                            <!-- NEW: Due Date Field -->
+                            <div>
+                                <label for="new-ticket-due-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date (Optional)</label>
+                                <input type="date" id="new-ticket-due-date" class="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="new-ticket-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                            <textarea id="new-ticket-description" rows="5" class="flex min-h-[80px] w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm" placeholder="Describe your issue in detail..." required></textarea>
+                        </div>
+
+                        <!-- Admin-only feature -->
+                        <div id="internal-ticket-toggle" class="hidden">
+                            <div class="flex items-center">
+                                <input id="new-ticket-internal" type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
+                                <label for="new-ticket-internal" class="ml-2 block text-sm text-gray-900">
+                                    Mark as Internal Ticket (not visible to clients) <!-- dark:text-gray-300 -->
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" id="cancel-new-ticket-form" class="h-10 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200 rounded-md text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 shadow-sm">
+                                Cancel
+                            </button>
+                            <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
+                                Submit Ticket
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script type="module">
+        // --- FAKE DATABASE & MOCK DATA ---
+        const MOCK_DATA = {
+            users: [
+                { id: 'u1', name: 'Alice Smith', email: 'alice@client.com', role: 'User', password: 'password123' },
+                { id: 'u2', name: 'Bob Johnson (Admin)', email: 'bob@admin.com', role: 'Admin', password: 'password123' },
+                { id: 'd1', name: 'Charlie (Tech)', email: 'charlie@tech.com', role: 'Department', departmentId: 'dept1', password: 'password123' },
+                { id: 'd2', name: 'Dana (Billing)', email: 'dana@billing.com', role: 'Department', departmentId: 'dept2', password: 'password123' },
+            ],
+            departments: [
+                { id: 'dept1', name: 'Technical Support' },
+                { id: 'dept2', name: 'Billing Department' },
+            ],
+            projects: [
+                { id: 'p1', name: 'Main Website Redesign' },
+                { id: 'p2', name: 'Mobile App (iOS)' },
+            ],
+            tickets: [
+                {
+                    id: 'T-1001',
+                    subject: 'Website is down',
+                    projectId: 'p1',
+                    createdByUserId: 'u1',
+                    type: 'External',
+                    status: 'New',
+                    priority: 'High',
+                    description: 'Our main website is not loading. We are getting a 500 error.',
+                    assignedToUserId: null, // CHANGED
+                    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                    dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // NEW
+                    comments: [
+                        { userId: 'u1', text: 'This is urgent, please help!', timestamp: new Date(Date.now() - 1 * 59 * 60 * 1000).toISOString() }
+                    ]
+                },
+                {
+                    id: 'T-1002',
+                    subject: 'Password reset failure',
+                    projectId: 'p1',
+                    createdByUserId: 'u1',
+                    type: 'External',
+                    status: 'Assigned',
+                    priority: 'Medium',
+                    description: 'I am trying to reset my password but I am not receiving the email.',
+                    assignedToUserId: 'd1', // CHANGED (Assigned to Charlie)
+                    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+                    dueDate: null, // NEW
+                    comments: [
+                        { userId: 'u1', text: 'I tried three times, nothing in spam.', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u2', text: 'Assigned to Charlie.', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() } // CHANGED
+                    ]
+                },
+                {
+                    id: 'T-1003',
+                    subject: 'Server upgrade planning',
+                    projectId: 'p2',
+                    createdByUserId: 'u2',
+                    type: 'Internal',
+                    status: 'In Progress',
+                    priority: 'Low',
+                    description: 'We need to plan the Q4 server migration for the mobile app backend.',
+                    assignedToUserId: 'd1', // CHANGED (Assigned to Charlie)
+                    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+                    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // NEW
+                    comments: [
+                        { userId: 'u2', text: 'Charlie, can you get a cost estimate?', timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd1', text: 'On it. I will have the estimate by EOD tomorrow.', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() }
+                    ]
+                },
+                {
+                    id: 'T-1004',
+                    subject: 'Invoice #INV-2025-003 clarification',
+                    projectId: 'p1',
+                    createdByUserId: 'u1',
+                    type: 'External',
+                    status: 'Closed',
+                    priority: 'Low',
+                    description: 'What is this "Data Overage" charge for $50?',
+                    assignedToUserId: 'd2', // CHANGED (Assigned to Dana)
+                    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                    dueDate: null, // NEW
+                    comments: [
+                        { userId: 'u2', text: 'Assigned to Billing.', timestamp: new Date(Date.now() - 3 * 23 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd2', text: 'Hi Alice, that charge was for the extra 10GB of storage you used last month. I have attached the usage report.', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'u1', text: 'Ah, I see. Thank you for clarifying!', timestamp: new Date(Date.now() - 2 * 23 * 60 * 60 * 1000).toISOString() },
+                        { userId: 'd2', text: 'No problem! Marking this as closed.', timestamp: new Date(Date.now() - 2 * 22 * 60 * 60 * 1000).toISOString() }
+                    ]
+                }
+            ],
+            notifications: [
+                { id: 'n1', userId: 'u2', text: 'New ticket T-1002 created by Alice Smith.', timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), read: true },
+                { id: 'n2', userId: 'd1', text: 'Ticket T-1002 (Password reset failure) assigned to you.', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), read: false }, // CHANGED
+                { id: 'n3', userId: 'u2', text: 'New ticket T-1001 created by Alice Smith.', timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), read: false },
+            ]
+        };
+
+        // --- APPLICATION STATE ---
+        const app = {
+            state: {
+                currentUser: null,
+                currentView: 'auth-login', // 'auth-login', 'auth-signup', 'auth-forgot-password', 'dashboard', 'ticket-detail', 'new-ticket'
+                selectedTicketId: null,
+                users: MOCK_DATA.users,
+                departments: MOCK_DATA.departments,
+                projects: MOCK_DATA.projects,
+                tickets: MOCK_DATA.tickets,
+                theme: localStorage.getItem('theme') || 'system', // 'light', 'dark', 'system'
+                notifications: MOCK_DATA.notifications,
+            },
+
+            // --- UTILITY METHODS ---
+            
+            getUser(userId) {
+                return this.state.users.find(u => u.id === userId) || { name: 'Unassigned' }; // CHANGED: Default to 'Unassigned'
+            },
+            
+            getProject(projectId) {
+                return this.state.projects.find(p => p.id === projectId) || { name: 'Unknown Project' };
+            },
+            
+            getDepartment(deptId) {
+                // This is now less important, but still useful for user info
+                return this.state.departments.find(d => d.id === deptId) || { name: 'No Department' };
+            },
+
+            timeAgo(dateString) {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                const seconds = Math.floor((new Date() - date) / 1000);
+                let interval = seconds / 31536000;
+                if (interval > 1) return Math.floor(interval) + " years ago";
+                interval = seconds / 2592000;
+                if (interval > 1) return Math.floor(interval) + " months ago";
+                interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " days ago";
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " hours ago";
+                interval = seconds / 60;
+                if (interval > 1) return Math.floor(interval) + " minutes ago";
+                return "Just now";
+            },
+
+            // NEW: Format date for display
+            formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                // Use toLocaleDateString for a friendly format
+                return date.toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                });
+            },
+
+            getStatusColor(status) {
+                switch (status) {
+                    case 'New': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'; 
+                    case 'Assigned': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300';
+                    case 'In Progress': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+                    case 'On Hold': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'; // NEW
+                    case 'Re-opened': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'; // NEW
+                    case 'Closed': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+                    case 'Cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+                    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                }
+            },
+
+            getPriorityColor(priority) {
+                // ... (same as before)
+                switch (priority) {
+                    case 'High': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+                    case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+                    case 'Low': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+                    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                }
+            },
+
+            // --- THEME METHODS (NEW) ---
+            applyTheme() {
+                const theme = this.state.theme;
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const htmlEl = document.documentElement;
+
+                if (theme === 'dark' || (theme === 'system' && isSystemDark)) {
+                    htmlEl.classList.add('dark');
+                } else {
+                    htmlEl.classList.remove('dark');
+                }
+                // Update button icons in header if it's rendered
+                const sunIcon = document.getElementById('theme-sun-icon');
+                if (sunIcon) {
+                    sunIcon.classList.toggle('hidden', htmlEl.classList.contains('dark'));
+                    document.getElementById('theme-moon-icon').classList.toggle('hidden', !htmlEl.classList.contains('dark'));
+                }
+            },
+            toggleTheme() {
+                this.state.theme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                localStorage.setItem('theme', this.state.theme);
+                this.applyTheme();
+            },
+
+            // --- NOTIFICATION METHODS ---
+            createNotification(userId, text) {
+                // ... (same as before)
+                const newNotification = {
+                    id: `n-${Date.now()}`,
+                    userId: userId,
+                    text: text,
+                    timestamp: new Date().toISOString(),
+                    read: false,
+                };
+                this.state.notifications.unshift(newNotification);
+                this.renderHeader(); // Update header to show dot
+            },
+            markNotificationsAsRead() {
+                // ... (same as before)
+                this.state.notifications
+                    .filter(n => n.userId === this.state.currentUser.id)
+                    .forEach(n => n.read = true);
+                this.renderHeader(); // Update header to hide dot
+            },
+
+            // --- VIEW NAVIGATION ---
+            navigate(viewName) {
+                // ... (same as before)
+                this.state.currentView = viewName;
+                const authView = document.getElementById('auth-view');
+                const mainAppView = document.getElementById('main-app-view');
+
+                if (viewName.startsWith('auth-')) {
+                    authView.classList.add('active');
+                    mainAppView.classList.remove('active');
+                    document.querySelectorAll('.auth-card').forEach(view => view.classList.remove('active'));
+                    const cardId = viewName.replace('auth-', '') + '-view';
+                    document.getElementById(cardId).classList.add('active');
+                } else {
+                    authView.classList.remove('active');
+                    mainAppView.classList.add('active');
+                    document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+                    const viewId = viewName + '-view'; // e.g., 'dashboard-view'
+                    document.getElementById(viewId).classList.add('active');
+                }
+                window.scrollTo(0, 0);
+            },
+            
+            // --- AUTHENTICATION METHODS ---
+            onLogin(event) {
+                // ... (same as before)
+                event.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const errorEl = document.getElementById('login-error');
+                const user = this.state.users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    this.state.currentUser = user;
+                    errorEl.classList.add('hidden');
+                    this.navigate('dashboard');
+                    this.render();
+                } else {
+                    errorEl.innerText = 'Invalid email or password.';
+                    errorEl.classList.remove('hidden');
+                }
+            },
+            onDemoLogin(email, password) {
+                // ... (same as before)
+                document.getElementById('login-email').value = email;
+                document.getElementById('login-password').value = password;
+                document.getElementById('login-form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            },
+            onSignup(event) {
+                // ... (same as before)
+                event.preventDefault();
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const errorEl = document.getElementById('signup-error');
+                if (this.state.users.find(u => u.email === email)) {
+                    errorEl.innerText = 'An account with this email already exists.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                const newUser = {
+                    id: `u-${Date.now().toString().slice(-4)}`,
+                    name: name,
+                    email: email,
+                    password: password,
+                    role: 'User' // New signups are always 'User'
+                };
+                this.state.users.push(newUser);
+                this.state.currentUser = newUser;
+                this.navigate('dashboard');
+                this.render();
+            },
+            onForgotPassword(event) {
+                // ... (same as before)
+                event.preventDefault();
+                const successEl = document.getElementById('forgot-success');
+                successEl.innerText = 'If an account exists, a reset link has been sent. (Simulation)';
+                successEl.classList.remove('hidden');
+                document.getElementById('forgot-form').reset();
+            },
+            onLogout() {
+                // ... (same as before)
+                this.state.currentUser = null;
+                this.navigate('auth-login');
+                this.renderHeader(); // Update header
+            },
+
+
+            // --- RENDER METHODS ---
+            
+            render() {
+                // ... (same as before)
+                if (!this.state.currentUser) {
+                    // **** FIX: Explicitly navigate to auth-login on initial render ****
+                    this.navigate('auth-login');
+                    this.renderHeader();
+                    return;
+                }
+                
+                this.renderHeader();
+                
+                // Based on the currentView, render the correct part of the app
+                switch(this.state.currentView) {
+                    case 'dashboard':
+                        this.renderDashboard();
+                        break;
+                    case 'ticket-detail':
+                        this.renderTicketDetail();
+                        break;
+                    case 'new-ticket':
+                        this.renderNewTicketForm();
+                        break;
+                    // **** FIX: Add a default case to handle unknown states ****
+                    default:
+                        this.navigate('dashboard');
+                        this.renderDashboard();
+                }
+            },
+
+            renderHeader() {
+                // ... (same as before)
+                const navRight = document.getElementById('nav-right-side');
+                if (!this.state.currentUser) {
+                    navRight.innerHTML = ''; // Clear header when logged out
+                    return;
+                }
+                
+                // User is logged in, show notifications and logout
+                const myNotifications = this.state.notifications
+                    .filter(n => n.userId === this.state.currentUser.id);
+                const unreadCount = myNotifications.filter(n => !n.read).length;
+
+                navRight.innerHTML = `
+                    <button id="theme-toggle-button" type="button" class="p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200">
+                        <span class="sr-only">Toggle theme</span>
+                        <svg id="theme-sun-icon" class="h-6 w-6"><use href="#icon-sun"></use></svg>
+                        <svg id="theme-moon-icon" class="h-6 w-6 hidden"><use href="#icon-moon"></use></svg>
+                    </button>
+
+                    <div class="relative">
+                        <button id="notification-button" type="button" class="relative p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                            <span class="sr-only">View notifications</span>
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><use href="#icon-bell"></use></svg>
+                            <span id="notification-dot" class="${unreadCount > 0 ? '' : 'hidden'} absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        
+                        <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                            <div class="p-3 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
+                            </div>
+                            <div id="notification-list" class="max-h-96 overflow-y-auto comment-scrollbar">
+                                ${myNotifications.length === 0 ? '<p class="text-sm text-gray-500 dark:text-gray-400 p-4 text-center">No notifications.</p>' :
+                                  myNotifications.map(n => `
+                                    <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${n.read ? 'opacity-70' : 'font-semibold'}">
+                                        <p class="text-sm text-gray-800 dark:text-gray-200">${n.text}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${this.timeAgo(n.timestamp)}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="p-2 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
+                                <button id="notification-clear" class="w-full text-center text-sm text-teal-600 dark:text-teal-400 hover:underline">Mark all as read</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="logout-button" class="flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400">
+                        <svg class="h-5 w-5 mr-1"><use href="#icon-log-out"></use></svg>
+                        Logout
+                    </button>
+                `;
+
+                // Add listeners for the new header buttons
+                document.getElementById('notification-button').addEventListener('click', () => {
+                    document.getElementById('notification-panel').classList.toggle('hidden');
+                });
+                document.getElementById('notification-clear').addEventListener('click', () => {
+                    this.markNotificationsAsRead();
+                    document.getElementById('notification-panel').classList.add('hidden');
+                });
+                document.getElementById('theme-toggle-button').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+                document.getElementById('logout-button').addEventListener('click', () => this.onLogout());
+            },
+
+            renderDashboard() {
+                // ... (logic is same, calls buildTicketList)
+                const { currentUser, tickets } = this.state;
+                const content = document.getElementById('dashboard-content');
+                const title = document.getElementById('dashboard-title');
+                
+                let html = '';
+                let stats = [];
+
+                if (currentUser.role === 'Admin') {
+                    title.innerText = `Welcome, ${currentUser.name}`;
+                    const newTickets = tickets.filter(t => t.status === 'New');
+                    const inProgressTickets = tickets.filter(t => t.status === 'In Progress');
+                    const closedTickets = tickets.filter(t => t.status === 'Closed');
+                    const allOtherTickets = tickets.filter(t => t.status !== 'New');
+                    
+                    stats = [
+                        { title: 'Total Tickets', value: tickets.length, icon: 'icon-ticket', color: 'text-teal-600' },
+                        { title: 'New (Unassigned)', value: newTickets.length, icon: 'icon-inbox', color: 'text-blue-600' },
+                        { title: 'In Progress', value: inProgressTickets.length, icon: 'icon-briefcase', color: 'text-yellow-600' },
+                        { title: 'Closed', value: closedTickets.length, icon: 'icon-check-circle', color: 'text-green-600' },
+                    ];
+                    
+                    html += this.buildTicketList('New Unassigned Tickets', newTickets);
+                    html += this.buildTicketList('All Other Tickets', allOtherTickets);
+
+                } else if (currentUser.role === 'Department') {
+                    const dept = this.getDepartment(currentUser.departmentId);
+                    title.innerText = `${dept.name} Dashboard`;
+                    
+                    const myTickets = tickets.filter(t => t.assignedToUserId === currentUser.id); // CHANGED
+                    const myActive = myTickets.filter(t => t.status !== 'Closed' && t.status !== 'Cancelled');
+                    const myClosed = myTickets.filter(t => t.status === 'Closed' || t.status === 'Cancelled');
+
+                    stats = [
+                        { title: 'My Active Tickets', value: myActive.length, icon: 'icon-briefcase', color: 'text-yellow-600' },
+                        { title: 'My Closed Tickets', value: myClosed.length, icon: 'icon-check-circle', color: 'text-green-600' },
+                    ];
+                    
+                    html += this.buildTicketList('My Active Tickets', myActive);
+                    html += this.buildTicketList('My Closed Tickets', myClosed);
+                    
+                } else if (currentUser.role === 'User') {
+                    title.innerText = `Welcome, ${currentUser.name}`;
+                    const myTickets = tickets.filter(t => t.createdByUserId === currentUser.id);
+                    const myActive = myTickets.filter(t => t.status !== 'Closed' && t.status !== 'Cancelled');
+                    const myClosed = myTickets.filter(t => t.status === 'Closed' || t.status === 'Cancelled');
+
+                    stats = [
+                        { title: 'My Active Tickets', value: myActive.length, icon: 'icon-briefcase', color: 'text-yellow-600' },
+                        { title: 'My Closed Tickets', value: myClosed.length, icon: 'icon-check-circle', color: 'text-green-600' },
+                    ];
+
+                    html += this.buildTicketList('My Tickets', myTickets);
+                }
+
+                document.getElementById('dashboard-stats').innerHTML = stats.map(stat => `
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex items-center gap-4">
+                        <div class="p-3 rounded-full bg-teal-100 dark:bg-teal-900/50">
+                            <svg class="h-6 w-6 ${stat.color}"><use href="#${stat.icon}"></use></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">${stat.title}</p>
+                            <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">${stat.value}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                content.innerHTML = html;
+            },
+
+            buildTicketList(title, ticketList) {
+                let listHtml = '';
+                
+                if (ticketList.length === 0) {
+                    listHtml = `
+                        <div class="p-8 text-center bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                            <svg class="h-12 w-12 text-gray-400 mx-auto"><use href="#icon-inbox"></use></svg>
+                            <h4 class="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">No tickets found.</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">There are no tickets in this category.</p>
+                        </div>
+                    `;
+                } else {
+                    listHtml = ticketList
+                        .filter(ticket => {
+                            // Users should only ever see 'External' tickets.
+                            if (this.state.currentUser && this.state.currentUser.role === 'User') {
+                                return ticket.type === 'External';
+                            }
+                            return true; // Admin and Department see all
+                        })
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                        .map(ticket => {
+                            const createdBy = this.getUser(ticket.createdByUserId);
+                            const assignee = this.getUser(ticket.assignedToUserId); // CHANGED
+                            
+                            // NEW: Due date styling
+                            let dueDateHtml = '';
+                            if (ticket.dueDate) {
+                                const dueDate = new Date(ticket.dueDate);
+                                const isOverdue = dueDate < new Date() && ticket.status !== 'Closed' && ticket.status !== 'Cancelled';
+                                dueDateHtml = `
+                                    <span class="flex items-center text-xs ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-500'}">
+                                        <svg class="h-4 w-4 mr-1"><use href="#icon-calendar"></use></svg>
+                                        Due: ${this.formatDate(ticket.dueDate)} ${isOverdue ? '(Overdue)' : ''}
+                                    </span>
+                                `;
+                            }
+
+                            return `
+                                <a href="#" data-ticket-id="${ticket.id}" class="ticket-list-item block bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:border-teal-300 dark:hover:border-teal-600 transition-all duration-200">
+                                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-teal-600">${ticket.subject} (${ticket.id})</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                Created by: ${createdBy.name}
+                                                ${ticket.type === 'Internal' ? '<span class="ml-2 text-xs font-medium bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Internal</span>' : ''}
+                                            </p>
+                                        </div>
+                                        <div class="flex flex-row sm:flex-col items-end gap-2">
+                                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${this.getStatusColor(ticket.status)}">${ticket.status}</span>
+                                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityColor(ticket.priority)}">${ticket.priority}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">Assigned to: <span class="font-medium text-gray-700 dark:text-gray-300">${assignee.name}</span></span>
+                                        <div class="flex items-center gap-4">
+                                            ${dueDateHtml}
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">${this.timeAgo(ticket.createdAt)}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+                        }).join('<div class="my-4"></div>');
+                }
+
+                return `
+                    <section>
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">${title}</h3>
+                        <div class="space-y-4">
+                            ${listHtml}
+                        </div>
+                    </section>
+                `;
+            },
+            
+            renderTicketDetail() {
+                const ticket = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                if (!ticket) {
+                    this.navigate('dashboard');
+                    return;
+                }
+                
+                const content = document.getElementById('ticket-detail-content');
+                const createdBy = this.getUser(ticket.createdByUserId);
+                const project = this.getProject(ticket.projectId);
+                const assignee = this.getUser(ticket.assignedToUserId); // CHANGED
+                const { currentUser } = this.state;
+
+                // --- 1. Main Content (Left Column) ---
+                const mainContentHtml = `
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">${ticket.subject}</h2>
+                                <span class="text-sm font-semibold px-3 py-1 rounded-full ${this.getStatusColor(ticket.status)}">${ticket.status}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                Ticket ID: <span class="font-medium">${ticket.id}</span>
+                                ${ticket.type === 'Internal' ? '<span class="ml-2 text-xs font-medium bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Internal</span>' : ''}
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Description</h3>
+                            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${ticket.description}</p>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 p-6 border-b border-gray-200 dark:border-gray-700">Comments (${ticket.comments.length})</h3>
+                            <div id="comment-list" class="p-6 space-y-4 max-h-96 overflow-y-auto comment-scrollbar">
+                                ${this.buildCommentList(ticket.comments)}
+                            </div>
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                <form id="comment-form" class="flex items-start gap-3">
+                                    <img src="https://placehold.co/40x40/e2e8f0/64748b?text=${currentUser.name.charAt(0)}" alt="${currentUser.name}" class="h-10 w-10 rounded-full flex-shrink-0">
+                                    <textarea id="comment-text" class="flex-grow min-h-[40px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="Add a comment..." required></textarea>
+                                    <button type="submit" class="h-10 w-10 flex-shrink-0 flex items-center justify-center bg-teal-600 text-white rounded-md hover:bg-teal-700 shadow-sm">
+                                        <svg class="h-5 w-5"><use href="#icon-send"></use></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // --- 2. Sidebar (Right Column) ---
+                // NEW: Due Date styling in sidebar
+                let dueDateHtml = '';
+                if (ticket.dueDate) {
+                    const dueDate = new Date(ticket.dueDate);
+                    const isOverdue = dueDate < new Date() && ticket.status !== 'Closed' && ticket.status !== 'Cancelled';
+                    dueDateHtml = `
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Due Date:</span>
+                            <span class="font-medium ${isOverdue ? 'text-red-600' : 'text-gray-900 dark:text-gray-100'}">
+                                ${this.formatDate(ticket.dueDate)} ${isOverdue ? '(Overdue)' : ''}
+                            </span>
+                        </div>
+                    `;
+                } else {
+                     dueDateHtml = `
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Due Date:</span>
+                            <span class="font-medium text-gray-500">N/A</span>
+                        </div>
+                    `;
+                }
+
+                const sidebarHtml = `
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Workflow Actions -->
+                        ${this.buildWorkflowActions(ticket, currentUser)}
+
+                        <!-- Ticket Details -->
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Details</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Priority:</span>
+                                    <span class="font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityColor(ticket.priority)}">${ticket.priority}</span>
+                                </div>
+                                ${dueDateHtml}
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Project:</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">${project.name}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Created By:</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">${createdBy.name}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Created:</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">${this.timeAgo(ticket.createdAt)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600 dark:text-gray-400">Assigned To:</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">${assignee.name}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                content.innerHTML = mainContentHtml + sidebarHtml;
+            },
+            
+            buildCommentList(comments) {
+                // ... (same as before)
+                if (comments.length === 0) {
+                    return `<p class="text-sm text-gray-500 dark:text-gray-400 text-center">No comments yet.</p>`;
+                }
+                return comments.map(comment => {
+                    const user = this.getUser(comment.userId);
+                    return `
+                        <div class="flex items-start gap-3">
+                            <img src="https://placehold.co/40x40/e2e8f0/64748b?text=${user.name.charAt(0)}" alt="${user.name}" class="h-10 w-10 rounded-full flex-shrink-0">
+                            <div class="flex-grow bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-sm text-gray-800 dark:text-gray-200">${user.name}</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">${this.timeAgo(comment.timestamp)}</span>
+                                </div>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">${comment.text}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // --- UPDATED WORKFLOW ---
+            buildWorkflowActions(ticket, currentUser) {
+                let actionsHtml = '';
+
+                // 1. Admin: Assign User
+                if (currentUser.role === 'Admin' && (ticket.status === 'New' || ticket.status === 'Re-opened')) {
+                    // Only show users who are Admins or in a Department
+                    const assignableUsers = this.state.users.filter(u => u.role === 'Admin' || u.role === 'Department');
+                    const userOptions = assignableUsers.map(u => {
+                        const dept = u.departmentId ? ` (${this.getDepartment(u.departmentId).name})` : ' (Admin)';
+                        return `<option value="${u.id}">${u.name}${dept}</option>`
+                    }).join('');
+                    
+                    actionsHtml += `
+                        <label for="assign-user" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assign to User</label>
+                        <div class="flex gap-2">
+                            <select id="assign-user" class="flex-grow h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 px-3 py-2 text-sm">
+                                <option value="">Select a user...</option>
+                                ${userOptions}
+                            </select>
+                            <button id="assign-user-button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium shadow-sm">Assign</button>
+                        </div>
+                    `;
+                }
+
+                // 2. Assigned User: Start Work or Put On Hold
+                if (currentUser.id === ticket.assignedToUserId) {
+                    if (ticket.status === 'Assigned' || ticket.status === 'Re-opened') {
+                        actionsHtml += `
+                            <button data-status="In Progress" class="workflow-action-button w-full h-10 px-4 py-2 bg-yellow-500 text-white rounded-md text-sm font-medium shadow-sm">
+                                Start Work (Set to In Progress)
+                            </button>
+                        `;
+                    }
+                    if (ticket.status === 'In Progress') {
+                        actionsHtml += `
+                            <button data-status="On Hold" class="workflow-action-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium shadow-sm">
+                                Put On Hold (Waiting for client)
+                            </button>
+                            <button data-status="Closed" class="workflow-action-button w-full h-10 px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium shadow-sm">
+                                Mark as Closed
+                            </button>
+                        `;
+                    }
+                    if (ticket.status === 'On Hold') {
+                         actionsHtml += `
+                            <button data-status="In Progress" class="workflow-action-button w-full h-10 px-4 py-2 bg-yellow-500 text-white rounded-md text-sm font-medium shadow-sm">
+                                Resume Work (Set to In Progress)
+                            </button>
+                        `;
+                    }
+                }
+                
+                // 3. Creator/Admin: Cancel Ticket
+                if ((currentUser.role === 'Admin' || currentUser.id === ticket.createdByUserId) && (ticket.status !== 'Closed' && ticket.status !== 'Cancelled')) {
+                    actionsHtml += `
+                        <button data-status="Cancelled" class="workflow-action-button w-full h-10 px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium mt-2 shadow-sm">
+                            Cancel Ticket
+                        </button>
+                    `;
+                }
+
+                // 4. Creator/Admin: Re-open Ticket
+                if ((currentUser.role === 'Admin' || currentUser.id === ticket.createdByUserId) && ticket.status === 'Closed') {
+                    actionsHtml += `
+                        <button data-status="Re-opened" class="workflow-action-button w-full h-10 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium mt-2 shadow-sm">
+                            Re-open Ticket
+                        </button>
+                    `;
+                }
+
+                if (actionsHtml === '') {
+                    actionsHtml = `<p class="text-sm text-gray-500 dark:text-gray-400 text-center">No actions available for you at this status.</p>`;
+                }
+
+                return `
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Workflow Actions</h3>
+                        <div class="space-y-3">
+                            ${actionsHtml}
+                        </div>
+                    </div>
+                `;
+            },
+            
+            renderNewTicketForm() {
+                // ... (same as before, just added due date)
+                const { currentUser } = this.state;
+                
+                document.getElementById('new-ticket-name').value = currentUser.name;
+                document.getElementById('new-ticket-email').value = currentUser.email;
+
+                const projectSelect = document.getElementById('new-ticket-project');
+                projectSelect.innerHTML = this.state.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+                const internalToggle = document.getElementById('internal-ticket-toggle');
+                if (currentUser.role === 'Admin') {
+                    internalToggle.classList.remove('hidden');
+                } else {
+                    internalToggle.classList.add('hidden');
+                }
+                
+                document.getElementById('new-ticket-form').reset();
+                // Re-populate readonly fields after reset
+                document.getElementById('new-ticket-name').value = currentUser.name;
+                document.getElementById('new-ticket-email').value = currentUser.email;
+                projectSelect.value = this.state.projects[0].id;
+                // NEW: Set min date for due date to today
+                document.getElementById('new-ticket-due-date').min = new Date().toISOString().split('T')[0];
+            },
+
+            // --- ACTION HANDLERS ---
+            
+            onNewTicketSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+                
+                const newTicket = {
+                    id: `T-${Date.now().toString().slice(-4)}`,
+                    subject: form['new-ticket-subject'].value,
+                    projectId: form['new-ticket-project'].value,
+                    createdByUserId: this.state.currentUser.id,
+                    type: this.state.currentUser.role === 'Admin' && form['new-ticket-internal'].checked ? 'Internal' : 'External',
+                    status: 'New',
+                    priority: form['new-ticket-priority'].value,
+                    description: form['new-ticket-description'].value,
+                    assignedToUserId: null, // CHANGED
+                    createdAt: new Date().toISOString(),
+                    dueDate: form['new-ticket-due-date'].value || null, // NEW
+                    comments: []
+                };
+
+                newTicket.comments.push({
+                    userId: this.state.currentUser.id,
+                    text: `Ticket created: "${newTicket.description.substring(0, 50)}..."`,
+                    timestamp: new Date().toISOString(),
+                });
+
+                this.state.tickets.unshift(newTicket);
+                
+                this.state.users
+                    .filter(u => u.role === 'Admin' && u.id !== this.state.currentUser.id)
+                    .forEach(admin => {
+                        this.createNotification(admin.id, `New ticket ${newTicket.id} created by ${this.state.currentUser.name}.`);
+                    });
+
+                this.navigate('dashboard');
+                this.render();
+            },
+
+            // RENAMED from onAssignDepartment
+            onAssignUser() {
+                const userId = document.getElementById('assign-user').value;
+                if (!userId) {
+                    alert('Please select a user.'); // Use a modal in a real app
+                    return;
+                }
+                
+                const ticket = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                ticket.status = 'Assigned';
+                ticket.assignedToUserId = userId; // CHANGED
+                
+                const assignedUser = this.getUser(userId);
+                
+                ticket.comments.push({
+                    userId: this.state.currentUser.id,
+                    text: `Assigned to ${assignedUser.name}.`,
+                    timestamp: new Date().toISOString(),
+                });
+
+                // Notify the *specific user*
+                if (userId !== this.state.currentUser.id) {
+                     this.createNotification(userId, `Ticket ${ticket.id} (${ticket.subject}) has been assigned to you.`);
+                }
+                
+                // Notify the creator
+                if (ticket.createdByUserId !== this.state.currentUser.id && ticket.createdByUserId !== userId) {
+                     this.createNotification(ticket.createdByUserId, `Your ticket ${ticket.id} has been assigned to ${assignedUser.name}.`);
+                }
+
+                this.renderTicketDetail();
+            },
+            
+            onChangeStatus(newStatus) {
+                const ticket = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                ticket.status = newStatus;
+
+                ticket.comments.push({
+                    userId: this.state.currentUser.id,
+                    text: `Ticket status changed to ${newStatus}.`,
+                    timestamp: new Date().toISOString(),
+                });
+
+                // Notify admin and creator
+                this.state.users.filter(u => u.role === 'Admin' && u.id !== this.state.currentUser.id).forEach(admin => {
+                    this.createNotification(admin.id, `Ticket ${ticket.id} status changed to ${newStatus} by ${this.state.currentUser.name}.`);
+                });
+                if (ticket.createdByUserId !== this.state.currentUser.id) {
+                     this.createNotification(ticket.createdByUserId, `Your ticket ${ticket.id} status has been updated to ${newStatus}.`);
+                }
+                
+                // If re-opened, also notify the assigned user
+                if (newStatus === 'Re-opened' && ticket.assignedToUserId && ticket.assignedToUserId !== this.state.currentUser.id) {
+                    this.createNotification(ticket.assignedToUserId, `Ticket ${ticket.id} has been re-opened by ${this.state.currentUser.name}.`);
+                }
+
+
+                this.renderTicketDetail();
+            },
+
+            onAddComment(event) {
+                event.preventDefault();
+                const text = document.getElementById('comment-text').value;
+                if (!text) return;
+
+                const ticket = this.state.tickets.find(t => t.id === this.state.selectedTicketId);
+                
+                ticket.comments.push({
+                    userId: this.state.currentUser.id,
+                    text: text,
+                    timestamp: new Date().toISOString(),
+                });
+
+                // Notify all relevant parties
+                const partiesToNotify = new Set();
+                this.state.users.filter(u => u.role === 'Admin').forEach(u => partiesToNotify.add(u.id)); // All Admins
+                partiesToNotify.add(ticket.createdByUserId); // Creator
+                if (ticket.assignedToUserId) {
+                    partiesToNotify.add(ticket.assignedToUserId); // Assigned User
+                }
+                partiesToNotify.delete(this.state.currentUser.id); // Don't notify self
+                
+                partiesToNotify.forEach(userId => {
+                    this.createNotification(userId, `New comment on ticket ${ticket.id} by ${this.state.currentUser.name}.`);
+                });
+                
+                // NEW: If ticket is "On Hold" and client comments, set it back to "In Progress"
+                if (this.state.currentUser.role === 'User' && ticket.status === 'On Hold') {
+                    ticket.status = 'In Progress';
+                    ticket.comments.push({
+                        userId: 'u2', // System comment
+                        text: `Status automatically changed to "In Progress" due to new client comment.`,
+                        timestamp: new Date().toISOString(),
+                    });
+                    
+                    // Notify assigned user that the ticket is active again
+                    if (ticket.assignedToUserId) {
+                        this.createNotification(ticket.assignedToUserId, `Ticket ${ticket.id} is now "In Progress" after client reply.`);
+                    }
+                    this.renderTicketDetail();
+                } 
+                // **** THIS IS THE FIX: The 'KA' typo was here. It has been removed. ****
+
+                document.getElementById('comment-list').innerHTML = this.buildCommentList(ticket.comments);
+                document.getElementById('comment-text').value = '';
+                
+                const commentHeader = document.querySelector('#comment-list').parentElement.querySelector('h3');
+                commentHeader.innerText = `Comments (${ticket.comments.length})`;
+            },
+
+
+            // --- EVENT LISTENER SETUP ---
+            initListeners() {
+                // Small helper to safely attach listeners to elements that may not exist yet
+                const safeOn = (id, event, handler) => {
+                    const el = document.getElementById(id);
+                    if (!el) return null;
+                    el.addEventListener(event, handler);
+                    return el;
+                };
+
+                // Auth form submissions
+                safeOn('login-form', 'submit', (e) => this.onLogin(e));
+                safeOn('signup-form', 'submit', (e) => this.onSignup(e));
+                safeOn('forgot-form', 'submit', (e) => this.onForgotPassword(e));
+
+                // Auth navigation links
+                safeOn('show-signup-form', 'click', (e) => { e.preventDefault(); this.navigate('auth-signup'); });
+                safeOn('show-forgot-form', 'click', (e) => { e.preventDefault(); this.navigate('auth-forgot-password'); });
+                safeOn('show-login-form-from-signup', 'click', (e) => { e.preventDefault(); this.navigate('auth-login'); });
+                safeOn('show-login-form-from-forgot', 'click', (e) => { e.preventDefault(); this.navigate('auth-login'); });
+
+                // Demo login buttons (use the button element dataset to avoid e.target issues)
+                const demoButtons = document.querySelectorAll('.demo-login-button');
+                if (demoButtons && demoButtons.length) {
+                    demoButtons.forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const email = button.dataset.email;
+                            const password = button.dataset.password;
+                            this.onDemoLogin(email, password);
+                        });
+                    });
+                }
+
+                // Main App Navigation buttons
+                safeOn('show-new-ticket-form', 'click', () => {
+                    this.navigate('new-ticket');
+                    this.renderNewTicketForm();
+                });
+
+                const backButtons = ['back-to-dashboard', 'cancel-new-ticket', 'cancel-new-ticket-form'];
+                backButtons.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el) return; // some views/elements may not exist on initial load
+                    el.addEventListener('click', () => {
+                        this.navigate('dashboard');
+                        this.renderDashboard();
+                    });
+                });
+
+                // New ticket form submission
+                safeOn('new-ticket-form', 'submit', (e) => this.onNewTicketSubmit(e));
+
+                // Event Delegation for Dynamic Content in main app
+                const appContainer = document.getElementById('app-container');
+                if (appContainer) {
+                    appContainer.addEventListener('click', (e) => {
+                        // Clicks on ticket list items
+                        const ticketItem = e.target.closest('.ticket-list-item');
+                        if (ticketItem) {
+                            e.preventDefault();
+                            this.state.selectedTicketId = ticketItem.dataset.ticketId;
+                            this.navigate('ticket-detail');
+                            this.renderTicketDetail();
+                            return;
+                        }
+                        
+                        // Clicks on workflow buttons
+                        const assignButton = e.target.closest('#assign-user-button');
+                        if (assignButton) {
+                            this.onAssignUser();
+                            return;
+                        }
+
+                        const statusButton = e.target.closest('.workflow-action-button');
+                        if (statusButton) {
+                            const newStatus = statusButton.dataset.status;
+                            this.onChangeStatus(newStatus);
+                            return;
+                        }
+                    });
+
+                    // Comment form submission (delegated)
+                    appContainer.addEventListener('submit', (e) => {
+                        if (e.target && e.target.id === 'comment-form') {
+                            this.onAddComment(e);
+                        }
+                    });
+                }
+
+                // Notification panel closing — global
+                document.body.addEventListener('click', (e) => {
+                    const panel = document.getElementById('notification-panel');
+                    if (panel && !panel.classList.contains('hidden') && !e.target.closest('#notification-button') && !e.target.closest('#notification-panel')) {
+                        panel.classList.add('hidden');
+                    }
+                }, true);
+            },
+            
+            start() {
+                this.applyTheme(); // NEW: Apply theme on initial load
+                this.initListeners();
+                this.render(); // Initial render (will show auth page)
+            }
+        };
+        
+        // --- START THE APP ---
+        document.addEventListener('DOMContentLoaded', () => {
+            app.start();
+        });
+    </script>
+
+</body>
+</html>
