@@ -37,30 +37,28 @@
     #auth-view.view.active {
       display: flex !important;
     }
-    /* FIX: Ensure the Admin view is flexible and fills the screen, handling its own children layouts */
+    
+    /* Responsive Admin Dashboard Layout */
     #admin-dashboard-view.view.active {
       display: flex !important;
+      flex-direction: column;
       height: 100vh;
       overflow: hidden;
     }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
+    @media (min-width: 768px) {
+      #admin-dashboard-view.view.active {
+        flex-direction: row;
       }
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
     @keyframes gradientBG {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     .animated-gradient {
       background: linear-gradient(-45deg, #f0fdfa, #ccfbf1, #a7f3d0, #0d9488);
@@ -68,38 +66,23 @@
       animation: gradientBG 15s ease infinite;
     }
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 30px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
+      from { opacity: 0; transform: translate3d(0, 30px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
     .animate-fadeInUp {
       opacity: 1;
       animation: fadeInUp 0.6s ease-out;
     }
-    button,
-    input,
-    select,
-    textarea,
-    a {
+    button, input, select, textarea, a {
       transition: all 0.2s ease-in-out;
     }
-    button:hover,
-    a:hover {
+    button:hover, a:hover {
       transform: translateY(-1px);
     }
-    button:active,
-    a:active {
+    button:active, a:active {
       transform: translateY(0);
     }
-    input:focus,
-    select:focus,
-    textarea:focus,
-    button:focus-visible {
+    input:focus, select:focus, textarea:focus, button:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
       border-color: #0d9488;
@@ -132,159 +115,75 @@
       animation: toast-in 0.3s ease-out;
     }
     @keyframes toast-in {
-      from {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
+      from { opacity: 0; transform: translate3d(100%, 0, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
     .toast.fade-out {
       animation: toast-out 0.5s ease-in forwards;
     }
     @keyframes toast-out {
-      from {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0);
-      }
+      from { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 0; transform: translate3d(100%, 0, 0); }
     }
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      opacity: 0;
-      animation: fadeIn 0.2s ease-out forwards;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; opacity: 0; animation: fadeIn 0.2s ease-out forwards;
     }
     .modal-content {
-      background-color: white;
-      border-radius: 8px;
+      background-color: white; border-radius: 8px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      width: 90%;
-      max-width: 500px;
-      transform: scale(0.95);
+      width: 90%; max-width: 500px; transform: scale(0.95);
       animation: fadeInUp 0.2s ease-out forwards;
     }
     #comment-toolbar {
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-      border-color: #d1d5db !important;
-      background: #f9fafb;
+      border-top-left-radius: 8px; border-top-right-radius: 8px;
+      border-color: #d1d5db !important; background: #f9fafb;
     }
     #comment-editor {
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-      border-color: #d1d5db !important;
-      background: white;
-      color: #111827;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+      border-color: #d1d5db !important; background: white;
+      color: #111827; font-family: 'Inter', sans-serif; font-size: 14px;
     }
-    .ql-editor {
-      min-height: 120px;
-    }
-    .ql-snow .ql-editor.static-content {
-      min-height: 0;
-      border: none;
-      line-height: 1.5;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-    .ql-editor.ql-blank::before {
-      color: #9ca3af;
-      font-style: normal;
-      font-family: 'Inter', sans-serif;
-    }
-    .avatar-group {
-      display: flex;
-    }
-    .avatar-group>*+* {
-      margin-left: -0.5rem;
-    }
-    .avatar-group img {
-      border: 2px solid white;
-    }
+    .ql-editor { min-height: 120px; }
+    .ql-snow .ql-editor.static-content { min-height: 0; border: none; line-height: 1.5; padding-top: 0; padding-bottom: 0; }
+    .ql-editor.ql-blank::before { color: #9ca3af; font-style: normal; font-family: 'Inter', sans-serif; }
+    .avatar-group { display: flex; }
+    .avatar-group>*+* { margin-left: -0.5rem; }
+    .avatar-group img { border: 2px solid white; }
+    
     /* Admin Dashboard Theme Overrides */
-    .admin-sidebar {
-      background-color: #f9fafb;
-      border-right: 1px solid #e5e7eb;
-    }
-    .admin-header {
-      background-color: white;
-      border-bottom: 1px solid #e5e7eb;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    .admin-main-card {
-      border: 1px solid #d1d5db;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-    }
+    .admin-sidebar { background-color: #f9fafb; }
+    @media (min-width: 768px) { .admin-sidebar { border-right: 1px solid #e5e7eb; } }
+    .admin-header { background-color: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+    .admin-main-card { border: 1px solid #d1d5db; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-radius: 12px; }
     .dashboard-btn-active {
-      background-color: #e0f2f7;
-      border: 2px solid #0d9488;
-      font-weight: 700;
-      color: #0d9488;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(13, 148, 136, 0.15);
-      transform: translateY(-1px);
+      background-color: #e0f2f7; border: 2px solid #0d9488;
+      font-weight: 700; color: #0d9488; border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(13, 148, 136, 0.15); transform: translateY(-1px);
     }
     .dashboard-btn {
-      background-color: white;
-      border-radius: 8px;
-      font-weight: 500;
-      color: #374151;
-      transition: all 0.2s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: auto;
-      min-height: 6rem;
-      padding: 0.75rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      background-color: white; border-radius: 8px; font-weight: 500;
+      color: #374151; transition: all 0.2s ease-in-out;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-width: auto; min-height: 6rem; padding: 0.75rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
     .dashboard-btn:hover {
-      background-color: #f9fafb;
-      border-color: #0d9488;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
-      transform: translateY(-2px);
+      background-color: #f9fafb; border-color: #0d9488;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1); transform: translateY(-2px);
     }
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    /* New: Horizontal slider for admin projects */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Horizontal slider for admin projects */
     #admin-projects-slider {
-      display: flex;
-      overflow-x: auto;
-      gap: 1.5rem;
-      padding-bottom: 1rem;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+      display: flex; overflow-x: auto; gap: 1.5rem; padding-bottom: 1rem;
+      scrollbar-width: none; -ms-overflow-style: none;
     }
-    #admin-projects-slider::-webkit-scrollbar {
-      display: none;
-    }
-    .project-slider-card {
-      flex-shrink: 0;
-      width: 20rem;
-      height: auto;
-    }
+    #admin-projects-slider::-webkit-scrollbar { display: none; }
+    .project-slider-card { flex-shrink: 0; width: 20rem; height: auto; }
   </style>
 </head>
 <body class="min-h-screen text-gray-800">
@@ -310,6 +209,7 @@
     <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></symbol>
     <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></symbol>
   </svg>
+
   <div id="auth-view" class="view active min-h-screen animated-gradient flex flex-col items-center justify-center p-4">
     <div class="w-full max-w-md">
       <div class="text-center mb-6 animate-fadeInUp" style="animation-delay: 0s;">
@@ -325,39 +225,24 @@
           <form id="login-form" class="space-y-4">
             <div>
               <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" id="login-email"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="email" id="login-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
             <div>
               <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input type="password" id="login-password"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="password" id="login-password" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
-            <div class="text-sm text-right"><a href="#" id="show-forgot-form"
-                class="font-medium text-teal-600 hover:underline">Forgot password?</a></div>
-            <button type="submit"
-              class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Log
-              In</button>
+            <div class="text-sm text-right"><a href="#" id="show-forgot-form" class="font-medium text-teal-600 hover:underline">Forgot password?</a></div>
+            <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Log In</button>
           </form>
-          <p class="text-sm text-center text-gray-600">Don't have an account? <a href="#" id="show-signup-form"
-              class="font-medium text-teal-600 hover:underline">Sign up</a></p>
+          <p class="text-sm text-center text-gray-600">Don't have an account? <a href="#" id="show-signup-form" class="font-medium text-teal-600 hover:underline">Sign up</a></p>
         </div>
-        <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 mt-6 animate-fadeInUp"
-          style="animation-delay: 0.2s;">
+        <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 mt-6 animate-fadeInUp" style="animation-delay: 0.2s;">
           <h3 class="text-lg font-semibold text-center text-gray-800 mb-4">Easy Demo Logins</h3>
           <div class="space-y-3">
-            <button data-email="bob@admin.com" data-password="password123"
-              class="demo-login-button w-full h-10 px-4 py-2 bg-gray-800 text-white rounded-md text-sm font-medium hover:bg-gray-900 shadow-sm ring-2 ring-offset-2 ring-gray-800">Log
-              in as Admin (Bob)</button>
-            <button data-email="charlie@tech.com" data-password="password123"
-              class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log
-              in as Tech Dept (Charlie)</button>
-            <button data-email="dana@billing.com" data-password="password123"
-              class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log
-              in as Billing Dept (Dana)</button>
-            <button data-email="alice@client.com" data-password="password123"
-              class="demo-login-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium hover:bg-gray-600 shadow-sm">Log
-              in as Client (Alice)</button>
+            <button data-email="bob@admin.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-800 text-white rounded-md text-sm font-medium hover:bg-gray-900 shadow-sm ring-2 ring-offset-2 ring-gray-800">Log in as Admin (Bob)</button>
+            <button data-email="charlie@tech.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log in as Tech Dept (Charlie)</button>
+            <button data-email="dana@billing.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 shadow-sm">Log in as Billing Dept (Dana)</button>
+            <button data-email="alice@client.com" data-password="password123" class="demo-login-button w-full h-10 px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium hover:bg-gray-600 shadow-sm">Log in as Client (Alice)</button>
           </div>
         </div>
       </div>
@@ -368,108 +253,70 @@
           <form id="signup-form" class="space-y-4">
             <div>
               <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input type="text" id="signup-name"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="text" id="signup-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
             <div>
               <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" id="signup-email"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="email" id="signup-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
             <div>
               <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input type="password" id="signup-password"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="password" id="signup-password" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
-            <button type="submit"
-              class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Create
-              Account</button>
+            <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Create Account</button>
           </form>
-          <p class="text-sm text-center text-gray-600">Already have an account? <a href="#"
-              id="show-login-form-from-signup" class="font-medium text-teal-600 hover:underline">Log in</a></p>
+          <p class="text-sm text-center text-gray-600">Already have an account? <a href="#" id="show-login-form-from-signup" class="font-medium text-teal-600 hover:underline">Log in</a></p>
         </div>
       </div>
       <div id="forgot-password-view" class="auth-card view animate-fadeInUp">
         <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-8 space-y-6">
           <h2 class="text-2xl font-bold text-center text-gray-900">Reset Password</h2>
           <div id="forgot-success" class="hidden p-3 bg-green-100 text-green-700 rounded-md text-sm"></div>
-          <p class="text-sm text-gray-600 text-center">Enter your email and we'll send you instructions to reset your
-            password. (This is a simulation).</p>
+          <p class="text-sm text-gray-600 text-center">Enter your email and we'll send you instructions to reset your password. (This is a simulation).</p>
           <form id="forgot-form" class="space-y-4">
             <div>
               <label for="forgot-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" id="forgot-email"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <input type="email" id="forgot-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
             </div>
-            <button type="submit"
-              class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Send
-              Reset Link</button>
+            <button type="submit" class="w-full flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Send Reset Link</button>
           </form>
-          <p class="text-sm text-center text-gray-600">Remembered your password? <a href="#"
-              id="show-login-form-from-forgot" class="font-medium text-teal-600 hover:underline">Log in</a></p>
+          <p class="text-sm text-center text-gray-600">Remembered your password? <a href="#" id="show-login-form-from-forgot" class="font-medium text-teal-600 hover:underline">Log in</a></p>
         </div>
       </div>
     </div>
   </div>
+
   <div id="admin-dashboard-view" class="view w-full bg-gray-100">
-    <div class="w-64 bg-white admin-sidebar flex flex-col h-full z-20">
-      <div class="p-4 border-b border-gray-200 flex items-center">
+    <div class="w-full md:w-64 bg-white admin-sidebar flex md:flex-col z-20 flex-shrink-0 overflow-x-auto md:overflow-visible border-b md:border-b-0 border-gray-200">
+      <div class="p-4 border-r md:border-r-0 md:border-b border-gray-200 flex items-center flex-shrink-0">
         <svg class="h-6 w-6 text-teal-600 mr-2">
           <use href="#icon-ticket-logo"></use>
         </svg>
         <div class="text-xl font-bold text-teal-600">Admin</div>
       </div>
-      <nav class="flex-1 p-4 space-y-2">
-        <button id="admin-nav-dashboard"
-          class="w-full text-left px-4 py-2 rounded-md font-bold text-lg bg-teal-50 text-teal-800 shadow-sm">Dashboard</button>
-        <button id="admin-nav-projects"
-          class="w-full text-left px-4 py-2 font-medium text-lg hover:bg-gray-100 rounded-md text-gray-700">Projects</button>
-        <button
-          class="w-full text-left px-4 py-2 font-medium text-lg hover:bg-gray-100 rounded-md text-gray-400 cursor-not-allowed">User
-          management</button>
-        <button
-          class="w-full text-left px-4 py-2 font-medium text-lg hover:bg-gray-100 rounded-md text-gray-400 cursor-not-allowed">settings</button>
+      <nav class="flex md:flex-1 p-2 md:p-4 space-x-2 md:space-x-0 md:space-y-2 items-center md:items-stretch whitespace-nowrap">
+        <button id="admin-nav-dashboard" class="text-left px-4 py-2 rounded-md font-bold text-sm md:text-lg bg-teal-50 text-teal-800 shadow-sm">Dashboard</button>
+        <button id="admin-nav-projects" class="text-left px-4 py-2 font-medium text-sm md:text-lg hover:bg-gray-100 rounded-md text-gray-700">Projects</button>
+        <button class="text-left px-4 py-2 font-medium text-sm md:text-lg hover:bg-gray-100 rounded-md text-gray-400 cursor-not-allowed">User management</button>
+        <button class="text-left px-4 py-2 font-medium text-sm md:text-lg hover:bg-gray-100 rounded-md text-gray-400 cursor-not-allowed">Settings</button>
       </nav>
     </div>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <header class="h-16 admin-header flex items-center justify-between px-8 z-10">
-        <div class="font-bold text-xl text-gray-900">Admin Dashboard</div>
-        <div class="flex items-center gap-6">
-          <span class="font-medium text-gray-600">Bob Johnson (Admin)</span>
-          <span class="font-medium cursor-pointer text-teal-600 hover:underline">Live Chat</span>
-          <button id="admin-logout" class="flex items-center font-medium text-gray-600 hover:text-red-600">
-            <svg class="h-5 w-5 mr-1">
-              <use href="#icon-log-out"></use>
-            </svg> Logout
+      <header class="h-16 admin-header flex items-center justify-between px-4 md:px-8 z-10 flex-shrink-0">
+        <div class="font-bold text-lg md:text-xl text-gray-900 hidden sm:block">Admin Dashboard</div>
+        <div class="flex items-center gap-4 md:gap-6 ml-auto">
+          <span class="font-medium text-sm md:text-base text-gray-600 truncate max-w-[120px] md:max-w-none">Bob Johnson (Admin)</span>
+          <span class="font-medium text-sm md:text-base cursor-pointer text-teal-600 hover:underline hidden md:block">Live Chat</span>
+          <button id="admin-logout" class="flex items-center font-medium text-sm md:text-base text-gray-600 hover:text-red-600">
+            <svg class="h-5 w-5 mr-1"><use href="#icon-log-out"></use></svg> <span class="hidden sm:inline">Logout</span>
           </button>
         </div>
       </header>
-      <div id="admin-main-content" class="p-6 md:p-8 overflow-y-auto flex-1">
-        <div id="admin-dashboard-widgets">
-          <div id="admin-status-buttons" class="grid grid-cols-7 gap-3 mb-6">
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 admin-main-card bg-white p-4 flex flex-col">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Ticket Trends (Last 7 Days)</h3>
-              <div class="flex-1">
-                <canvas id="adminTicketChart"></canvas>
-              </div>
-            </div>
-            <div class="lg:col-span-1 admin-main-card bg-white p-4 flex flex-col">
-              <h3 class="text-xl font-bold mb-4 text-center border-b pb-2 text-gray-800">All Over Feeds</h3>
-              <div id="admin-feed-list" class="flex-1 overflow-y-auto space-y-3 pr-2 comment-scrollbar">
-              </div>
-            </div>
-          </div>
-          <div class="mt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Projects</h3>
-            <div id="admin-projects-slider" class="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide">
-            </div>
-          </div>
+      <div id="admin-main-content" class="p-4 md:p-6 lg:p-8 overflow-y-auto flex-1">
         </div>
-      </div>
     </div>
   </div>
+
   <div id="main-app-view" class="view">
     <nav class="bg-white shadow-md w-full sticky top-0 z-50">
       <div class="max-w-[98%] mx-auto px-4 sm:px-6 lg:px-8">
@@ -478,22 +325,18 @@
             <svg class="h-6 w-6 text-teal-600">
               <use href="#icon-ticket-logo"></use>
             </svg>
-            <h1 id="nav-title" class="text-xl font-bold text-teal-600">Workflow Help Desk</h1>
+            <h1 id="nav-title" class="text-lg sm:text-xl font-bold text-teal-600 truncate">Workflow Help Desk</h1>
           </div>
-          <div id="nav-right-side" class="flex items-center gap-4"></div>
+          <div id="nav-right-side" class="flex items-center gap-2 sm:gap-4"></div>
         </div>
       </div>
     </nav>
     <main id="app-container" class="w-full bg-gray-50 min-h-[calc(100vh-64px)]">
-      <div id="projects-list-view" class="app-view view h-full">
-      </div>
+      <div id="projects-list-view" class="app-view view h-full"></div>
+      
       <div id="new-project-view" class="app-view view max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <button id="cancel-new-project"
-          class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
-          <svg class="h-4 w-4 mr-1">
-            <use href="#icon-arrow-left"></use>
-          </svg>
-          Back to Projects
+        <button id="cancel-new-project" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+          <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg> Back to Projects
         </button>
         <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
           <div class="p-6 border-b border-gray-200">
@@ -502,102 +345,73 @@
           <form id="new-project-form" class="p-6 space-y-4">
             <div>
               <label for="new-project-name" class="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
-              <input type="text" id="new-project-name"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                placeholder="e.g., Q4 Marketing Website" required>
+              <input type="text" id="new-project-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="e.g., Q4 Marketing Website" required>
             </div>
             <div>
               <label for="new-project-type" class="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
-              <select id="new-project-type"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
+              <select id="new-project-type" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
                 <option value="External">External (Client Facing)</option>
                 <option value="Internal">Internal (Company Only)</option>
               </select>
             </div>
             <div>
-              <label for="new-project-description" class="block text-sm font-medium text-gray-700 mb-1">Project
-                Description</label>
-              <textarea id="new-project-description" rows="3"
-                class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                placeholder="A brief description of the project..."></textarea>
+              <label for="new-project-description" class="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+              <textarea id="new-project-description" rows="3" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="A brief description of the project..."></textarea>
             </div>
             <div class="flex justify-end gap-3 pt-4">
-              <button type="button" id="cancel-new-project-form"
-                class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">
-                Cancel
-              </button>
-              <button type="submit"
-                class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
-                Create Project
-              </button>
+              <button type="button" id="cancel-new-project-form" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">Cancel</button>
+              <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Create Project</button>
             </div>
           </form>
         </div>
       </div>
+
       <div id="project-detail-view" class="app-view view max-w-[98%] mx-auto p-2 sm:p-4">
         <button id="back-to-projects" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
-          <svg class="h-4 w-4 mr-1">
-            <use href="#icon-arrow-left"></use>
-          </svg>
-          Back to All Projects
+          <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg> Back to All Projects
         </button>
-        <div class="flex justify-between items-center mb-6">
-          <h2 id="project-detail-title" class="text-3xl font-bold text-gray-900">Project Title</h2>
-          <button id="show-new-ticket-form"
-            class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
-            <svg class="h-5 w-5 mr-2 -ml-1">
-              <use href="#icon-plus"></use>
-            </svg>
-            Create New Ticket
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 id="project-detail-title" class="text-2xl sm:text-3xl font-bold text-gray-900 break-words w-full">Project Title</h2>
+          <button id="show-new-ticket-form" class="flex-shrink-0 flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
+            <svg class="h-5 w-5 mr-2 -ml-1"><use href="#icon-plus"></use></svg> Create New Ticket
           </button>
         </div>
-        <div id="project-status-buttons" class="grid grid-cols-7 gap-3 mb-6"></div>
+        
+        <div id="project-status-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6"></div>
+        
         <div id="project-ticket-lists" class="space-y-8">
-          <div class="flex gap-2 h-full">
-            <aside class="w-64 flex-shrink-0">
-              <div class="bg-white rounded-xl shadow-lg border p-6 h-full">
+          <div class="flex flex-col md:flex-row gap-4 h-full">
+            <aside class="w-full md:w-64 flex-shrink-0">
+              <div class="bg-white rounded-xl shadow-lg border p-4 sm:p-6 h-full">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Ticket Filters</h3>
-                <nav class="space-y-1" id="project-filter-nav"></nav>
+                <nav class="flex flex-wrap md:flex-col gap-2 md:gap-0 md:space-y-1" id="project-filter-nav"></nav>
               </div>
             </aside>
-            <main class="flex-1">
-              <div class="bg-white rounded-xl shadow-lg border p-6">
-                <div class="flex justify-between items-center mb-4">
+            <main class="flex-1 min-w-0">
+              <div class="bg-white rounded-xl shadow-lg border p-4 sm:p-6 overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                   <h3 id="table-title" class="text-lg font-semibold text-gray-900">All Tickets</h3>
-                  <input id="ticket-search" type="text" placeholder="Search tickets..."
-                    class="h-10 px-4 rounded-md border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
+                  <input id="ticket-search" type="text" placeholder="Search tickets..." class="h-10 w-full sm:w-auto px-4 rounded-md border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
                 </div>
-                <div class="overflow-x-auto">
-                  <table class="w-full table-auto">
+                <div class="overflow-x-auto w-full">
+                  <table class="w-full table-auto text-left whitespace-nowrap">
                     <thead>
                       <tr class="bg-teal-50">
-                        <th class="px-4 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Ticket ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">Title
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">Type
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Assigned to</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Priority</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Status</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Created</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-teal-800 uppercase tracking-wider">
-                          Actions</th>
+                        <th class="px-4 py-3 text-xs font-medium text-teal-800 uppercase tracking-wider">Ticket ID</th>
+                        <th class="px-4 py-3 text-xs font-medium text-teal-800 uppercase tracking-wider">Title</th>
+                        <th class="px-4 py-3 text-xs font-medium text-teal-800 uppercase tracking-wider">Type</th>
+                        <th class="px-4 py-3 text-xs font-medium text-teal-800 uppercase tracking-wider">Assigned to</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-teal-800 uppercase tracking-wider">Priority</th>
+                        <th class="px-4 py-3 text-xs font-medium text-teal-800 uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-teal-800 uppercase tracking-wider">Created</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-teal-800 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
-                    <tbody id="ticket-table-body" class="divide-y divide-gray-200">
-                    </tbody>
+                    <tbody id="ticket-table-body" class="divide-y divide-gray-200"></tbody>
                   </table>
                 </div>
                 <div id="no-tickets" class="hidden text-center py-8 text-gray-500">
-                  <svg class="h-12 w-12 mx-auto mb-2">
-                    <use href="#icon-inbox"></use>
-                  </svg>
-                  No tickets found.
+                  <svg class="h-12 w-12 mx-auto mb-2"><use href="#icon-inbox"></use></svg> No tickets found.
                 </div>
                 <div id="pagination-controls" class="hidden mt-4 flex items-center justify-between border-t border-gray-200 pt-3">
                   <div class="text-sm text-gray-500">Showing <span class="font-medium text-gray-900">1</span> to <span class="font-medium text-gray-900">25</span> of <span class="font-medium text-gray-900" id="total-tickets-count">0</span> tickets</div>
@@ -611,31 +425,26 @@
           </div>
         </div>
       </div>
+
       <div id="ticket-detail-view" class="app-view view max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <button id="back-to-project-detail"
-          class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
-          <svg class="h-4 w-4 mr-1">
-            <use href="#icon-arrow-left"></use>
-          </svg>
-          Back to Project
+        <button id="back-to-project-detail" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
+          <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg> Back to Project
         </button>
-        <div id="ticket-detail-header" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-6"></div>
+        <div id="ticket-detail-header" class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 mb-6"></div>
         <div id="ticket-detail-content" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-              <nav class="flex overflow-x-auto scrollbar-hide border-b border-gray-200" id="ticket-tab-nav"></nav>
-              <div id="ticket-tab-content" class="p-6"></div>
+          <div class="lg:col-span-2 space-y-6 min-w-0">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden w-full">
+              <nav class="flex overflow-x-auto scrollbar-hide border-b border-gray-200 w-full" id="ticket-tab-nav" style="-webkit-overflow-scrolling: touch;"></nav>
+              <div id="ticket-tab-content" class="p-4 sm:p-6"></div>
             </div>
           </div>
           <div id="ticket-detail-sidebar" class="lg:col-span-1 space-y-6"></div>
         </div>
       </div>
+
       <div id="new-ticket-view" class="app-view view max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <button id="cancel-new-ticket" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
-          <svg class="h-4 w-4 mr-1">
-            <use href="#icon-arrow-left"></use>
-          </svg>
-          Back to Project
+          <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg> Back to Project
         </button>
         <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
           <div class="p-6 border-b border-gray-200">
@@ -643,182 +452,83 @@
           </div>
           <form id="new-ticket-form" class="p-6 space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="new-ticket-name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                <input type="text" id="new-ticket-name"
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
-                  readonly>
-              </div>
-              <div>
-                <label for="new-ticket-email" class="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
-                <input type="email" id="new-ticket-email"
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
-                  readonly>
-              </div>
+              <div><label for="new-ticket-name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label><input type="text" id="new-ticket-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly></div>
+              <div><label for="new-ticket-email" class="block text-sm font-medium text-gray-700 mb-1">Your Email</label><input type="email" id="new-ticket-email" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly></div>
             </div>
-            <div id="new-ticket-project-wrapper" class="hidden">
-              <label for="new-ticket-project" class="block text-sm font-medium text-gray-700 mb-1">Project</label>
-              <input type="text" id="new-ticket-project-name"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
-                readonly>
-            </div>
+            <div id="new-ticket-project-wrapper" class="hidden"><label for="new-ticket-project" class="block text-sm font-medium text-gray-700 mb-1">Project</label><input type="text" id="new-ticket-project-name" class="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed" readonly></div>
             <div>
               <label for="new-ticket-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-              <select id="new-ticket-priority"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-              </select>
+              <select id="new-ticket-priority" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required><option>Low</option><option>Medium</option><option>High</option></select>
             </div>
             <div>
               <label for="new-ticket-type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-              <select id="new-ticket-type"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
-                <option>General</option>
-                <option>Bug</option>
-                <option>Feature Request</option>
-                <option>Hardware</option>
-              </select>
+              <select id="new-ticket-type" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required><option>General</option><option>Bug</option><option>Feature Request</option><option>Hardware</option></select>
             </div>
-            <div>
-              <label for="new-ticket-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-              <input type="text" id="new-ticket-subject"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                placeholder="e.g., Website is down" required>
-            </div>
-            <div>
-              <label for="new-ticket-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date
-                (Optional)</label>
-              <input type="date" id="new-ticket-due-date"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label for="new-ticket-description"
-                class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea id="new-ticket-description" rows="5"
-                class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                placeholder="Describe your issue in detail..." required></textarea>
-            </div>
+            <div><label for="new-ticket-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label><input type="text" id="new-ticket-subject" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="e.g., Website is down" required></div>
+            <div><label for="new-ticket-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date (Optional)</label><input type="date" id="new-ticket-due-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"></div>
+            <div><label for="new-ticket-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label><textarea id="new-ticket-description" rows="5" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" placeholder="Describe your issue in detail..." required></textarea></div>
             <div id="internal-ticket-toggle" class="hidden">
               <div class="flex items-center">
-                <input id="new-ticket-internal" type="checkbox"
-                  class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
-                <label for="new-ticket-internal" class="ml-2 block text-sm text-gray-900">
-                  Mark as Internal Ticket (not visible to clients)
-                </label>
+                <input id="new-ticket-internal" type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
+                <label for="new-ticket-internal" class="ml-2 block text-sm text-gray-900">Mark as Internal Ticket (not visible to clients)</label>
               </div>
             </div>
             <div class="flex justify-end gap-3 pt-4">
-              <button type="button" id="cancel-new-ticket-form"
-                class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">
-                Cancel
-              </button>
-              <button type="submit"
-                class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
-                Submit Ticket
-              </button>
+              <button type="button" id="cancel-new-ticket-form" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">Cancel</button>
+              <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Submit Ticket</button>
             </div>
           </form>
         </div>
       </div>
+
       <div id="edit-ticket-view" class="app-view view max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <button id="cancel-edit-ticket" class="flex items-center text-sm font-medium text-teal-600 hover:underline mb-4">
-          <svg class="h-4 w-4 mr-1">
-            <use href="#icon-arrow-left"></use>
-          </svg>
-          Back to Ticket
+          <svg class="h-4 w-4 mr-1"><use href="#icon-arrow-left"></use></svg> Back to Ticket
         </button>
         <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
-          <div class="p-6 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">Edit Ticket</h2>
-          </div>
+          <div class="p-6 border-b border-gray-200"><h2 class="text-xl font-semibold text-gray-900">Edit Ticket</h2></div>
           <form id="edit-ticket-form" class="p-6 space-y-4">
             <input type="hidden" id="edit-ticket-id">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label for="edit-ticket-priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                <select id="edit-ticket-priority"
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
-                  <option>Low</option>
-                  <option>Medium</option>
-                  <option>High</option>
-                </select>
+                <select id="edit-ticket-priority" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required><option>Low</option><option>Medium</option><option>High</option></select>
               </div>
               <div>
                 <label for="edit-ticket-type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select id="edit-ticket-type"
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
-                  <option>General</option>
-                  <option>Bug</option>
-                  <option>Feature Request</option>
-                  <option>Hardware</option>
-                </select>
+                <select id="edit-ticket-type" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required><option>General</option><option>Bug</option><option>Feature Request</option><option>Hardware</option></select>
               </div>
             </div>
-            <div>
-              <label for="edit-ticket-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-              <input type="text" id="edit-ticket-subject"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required>
-            </div>
-            <div>
-              <label for="edit-ticket-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-              <input type="date" id="edit-ticket-due-date"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label for="edit-ticket-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea id="edit-ticket-description" rows="5"
-                class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                required></textarea>
-            </div>
+            <div><label for="edit-ticket-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label><input type="text" id="edit-ticket-subject" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></div>
+            <div><label for="edit-ticket-due-date" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label><input type="date" id="edit-ticket-due-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"></div>
+            <div><label for="edit-ticket-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label><textarea id="edit-ticket-description" rows="5" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></textarea></div>
             <div class="flex justify-end gap-3 pt-4">
-              <button type="button" id="cancel-edit-ticket-form"
-                class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">
-                Cancel
-              </button>
-              <button type="submit"
-                class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">
-                Save Changes
-              </button>
+              <button type="button" id="cancel-edit-ticket-form" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200 shadow-sm">Cancel</button>
+              <button type="submit" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 shadow-sm">Save Changes</button>
             </div>
           </form>
         </div>
       </div>
     </main>
   </div>
+
   <div id="insert-link-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <div class="flex justify-between items-center p-4 border-b">
         <h3 class="text-lg font-semibold text-gray-900">Insert Link</h3>
-        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">
-          <svg class="h-6 w-6">
-            <use href="#icon-x"></use>
-          </svg>
-        </button>
+        <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6"><use href="#icon-x"></use></svg></button>
       </div>
       <div class="p-4 space-y-4">
-        <div>
-          <label for="modal-link-text" class="block text-sm font-medium text-gray-700 mb-1">Text to display</label>
-          <input type="text" id="modal-link-text"
-            class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-        </div>
-        <div>
-          <label for="modal-link-url" class="block text-sm font-medium text-gray-700 mb-1">To what URL should this link
-            go?</label>
-          <input type="url" id="modal-link-url" placeholder="https://example.com"
-            class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
-        </div>
+        <div><label for="modal-link-text" class="block text-sm font-medium text-gray-700 mb-1">Text to display</label><input type="text" id="modal-link-text" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"></div>
+        <div><label for="modal-link-url" class="block text-sm font-medium text-gray-700 mb-1">To what URL should this link go?</label><input type="url" id="modal-link-url" placeholder="https://example.com" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"></div>
       </div>
       <div class="flex justify-end gap-3 p-4 border-t bg-gray-50 rounded-b-lg">
-        <button id="modal-cancel-btn" type="button"
-          class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200">Cancel</button>
-        <button id="modal-insert-btn" type="button"
-          class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700">Insert
-          Link</button>
+        <button id="modal-cancel-btn" type="button" class="h-10 px-4 py-2 bg-gray-100 text-gray-900 rounded-md text-sm font-medium hover:bg-gray-200">Cancel</button>
+        <button id="modal-insert-btn" type="button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700">Insert Link</button>
       </div>
     </div>
   </div>
+
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script type="module">
     // --- FAKE DATABASE & MOCK DATA ---
@@ -868,7 +578,7 @@
           subject: 'Password reset failure',
           projectId: 'p1',
           createdByUserId: 'u1',
-          type: 'Bug',
+          type: 'To Do',
           status: 'To Do',
           priority: 'Medium',
           description: 'I am trying to reset my password but I am not receiving the email.',
@@ -966,6 +676,7 @@
         { id: 'n4', userId: 'u2', text: 'Ticket T-1005 (Billing discrepancy) created by Alice Smith.', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), read: false },
       ]
     };
+    
     // --- APPLICATION STATE ---
     const app = {
       state: {
@@ -987,6 +698,7 @@
         adminChartInstance: null, // Store chart instance
         pagination: { currentPage: 1, itemsPerPage: 25 } // Pagination Logic
       },
+      
       // --- HELPER METHODS ---
       getUser(userId) { return this.state.users.find(u => u.id === userId) || { name: 'Unassigned', id: 'unassigned' }; },
       getProject(projectId) { return this.state.projects.find(p => p.id === projectId) || { name: 'Unknown Project' }; },
@@ -1145,15 +857,15 @@
 
             const created = this.formatCreated(t.createdAt);
             return `
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2 text-sm text-gray-900">${t.id}</td>
-                <td class="px-4 py-2 text-sm text-gray-900">${t.subject}</td>
-                <td class="px-4 py-2 text-sm text-gray-900">${t.type}</td>
-                <td class="px-4 py-2 text-sm text-gray-900">${assignedTo}</td>
-                <td class="px-4 py-2 text-sm text-center">${prio}</td>
-                <td class="px-4 py-2 text-sm">${statusBadge}</td>
-                <td class="px-4 py-2 text-sm text-gray-500 text-right">${created}</td>
-                <td class="px-4 py-2 text-sm text-center">
+              <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0">
+                <td class="px-4 py-3 text-sm text-gray-900">${t.id}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">${t.subject}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">${t.type}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">${assignedTo}</td>
+                <td class="px-4 py-3 text-sm text-center">${prio}</td>
+                <td class="px-4 py-3 text-sm">${statusBadge}</td>
+                <td class="px-4 py-3 text-sm text-gray-500 text-right">${created}</td>
+                <td class="px-4 py-3 text-sm text-center">
                   <div class="flex gap-2 justify-center">
                     <button data-ticket-id="${t.id}" class="text-teal-600 hover:text-teal-800 p-1 rounded hover:bg-teal-50" title="View Details">
                       <svg class="h-4 w-4"><use href="#icon-eye"></use></svg>
@@ -1171,30 +883,32 @@
           }).join('');
         }
       },
+      
       // --- ADMIN DASHBOARD LOGIC ---
       renderAdminDashboard() {
         const mainContent = document.getElementById('admin-main-content');
         mainContent.innerHTML = `
           <div id="admin-dashboard-widgets">
-            <div id="admin-status-buttons" class="grid grid-cols-7 gap-3 mb-6"></div>
+            <div id="admin-status-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6"></div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div class="lg:col-span-2 admin-main-card bg-white p-4 flex flex-col">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Ticket Trends (Last 7 Days)</h3>
-                <div class="flex-1">
+                <div class="flex-1 w-full min-h-[250px]">
                   <canvas id="adminTicketChart"></canvas>
                 </div>
               </div>
-              <div class="lg:col-span-1 admin-main-card bg-white p-4 flex flex-col">
+              <div class="lg:col-span-1 admin-main-card bg-white p-4 flex flex-col min-h-[300px]">
                 <h3 class="text-xl font-bold mb-4 text-center border-b pb-2 text-gray-800">All Over Feeds</h3>
                 <div id="admin-feed-list" class="flex-1 overflow-y-auto space-y-3 pr-2 comment-scrollbar"></div>
               </div>
             </div>
             <div class="mt-6">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">Projects</h3>
-              <div id="admin-projects-slider" class="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide"></div>
+              <div id="admin-projects-slider" class="flex overflow-x-auto space-x-4 md:space-x-6 pb-4 scrollbar-hide"></div>
             </div>
           </div>
         `;
+        
         // 1. Get counts for buttons
         const counts = this.getTicketCounts();
         const statusButtons = document.getElementById('admin-status-buttons');
@@ -1207,24 +921,25 @@
           'Done': 'done',
           'Delayed': 'delayed'
         };
-        // Generate buttons with counts (Matching Theme)
+        
         if (statusButtons) {
           statusButtons.innerHTML = Object.entries(statusMap).map(([label, key]) => `
             <button data-filter="${key}" class="dashboard-btn ${key === this.state.currentFilter ? 'dashboard-btn-active' : ''}">
-              <span class="text-3xl font-bold text-gray-800">${counts[label]}</span>
+              <span class="text-2xl lg:text-3xl font-bold text-gray-800">${counts[label]}</span>
               <span class="text-xs font-medium text-gray-600 mt-1 text-center">${label}</span>
             </button>
           `).join('');
-          // Bind filter buttons
+          
           statusButtons.querySelectorAll('button[data-filter]').forEach(btn => {
             btn.onclick = (e) => {
               this.state.currentFilter = btn.dataset.filter;
               statusButtons.querySelectorAll('button').forEach(b => b.classList.remove('dashboard-btn-active'));
               btn.classList.add('dashboard-btn-active');
-              this.renderAdminDashboard(); // Re-render to update feeds and chart
+              this.renderAdminDashboard(); 
             };
           });
         }
+        
         // 2. Render Feeds
         const feedsContainer = document.getElementById('admin-feed-list');
         let tickets = [...this.state.tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -1233,33 +948,39 @@
           feedsContainer.innerHTML = tickets.map(t => `
             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm hover:bg-gray-100 transition-colors cursor-pointer" data-ticket-id="${t.id}">
               <div class="flex justify-between font-medium">
-                <span>${t.id} - ${t.subject}</span>
-                <span class="text-xs text-gray-500">${this.formatCreated(t.createdAt)}</span>
+                <span class="truncate pr-2">${t.id} - ${t.subject}</span>
+                <span class="text-xs text-gray-500 flex-shrink-0">${this.formatCreated(t.createdAt)}</span>
               </div>
-              <div class="flex justify-between mt-1">
+              <div class="flex justify-between mt-1 items-center">
                 ${this.getStatusBadge(t.status)}
-                <span class="text-xs text-gray-500">Filed by: ${this.getUser(t.createdByUserId).name.split(' ')[0]}</span>
+                <span class="text-xs text-gray-500 truncate pl-2">Filed by: ${this.getUser(t.createdByUserId).name.split(' ')[0]}</span>
               </div>
             </div>
           `).join('');
         }
+        
         // 3. Render Chart
         this.renderAdminChart();
+        
         // 4. Highlight active nav button
         document.querySelectorAll('.admin-sidebar button').forEach(btn => {
           btn.classList.remove('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
           btn.classList.add('font-medium', 'text-gray-700', 'hover:bg-gray-100');
         });
-        document.getElementById('admin-nav-dashboard').classList.add('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
-        document.getElementById('admin-nav-dashboard').classList.remove('font-medium', 'text-gray-700', 'hover:bg-gray-100');
-        // 5. Render Project Cards in Horizontal Slider
+        const dashBtn = document.getElementById('admin-nav-dashboard');
+        if (dashBtn) {
+           dashBtn.classList.add('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
+           dashBtn.classList.remove('font-medium', 'text-gray-700', 'hover:bg-gray-100');
+        }
+        
+        // 5. Render Project Cards
         const projectsSlider = document.getElementById('admin-projects-slider');
         if (projectsSlider) {
           let projectCardsHtml = '';
           const allProjects = this.state.projects;
           const allTickets = this.getVisibleTickets();
           if (allProjects.length === 0) {
-            projectCardsHtml = '<div class="text-center py-10 text-gray-500">No projects available.</div>';
+            projectCardsHtml = '<div class="text-center py-10 text-gray-500 w-full">No projects available.</div>';
           } else {
             projectCardsHtml = allProjects.map(p => {
               const projectTickets = allTickets.filter(t => t.projectId === p.id);
@@ -1289,16 +1010,15 @@
               const typeBadgeColor = p.type === 'Internal' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
               const typeLabel = p.type || 'External';
               return `
-                <div class="admin-main-card bg-white p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-all project-slider-card" data-project-id="${p.id}">
-                  <div class="p-3 flex-grow">
+                <div class="admin-main-card bg-white p-4 flex flex-col h-full cursor-pointer hover:shadow-lg transition-all project-slider-card w-[280px] md:w-80" data-project-id="${p.id}">
+                  <div class="p-2 md:p-3 flex-grow">
                     <div class="flex justify-between items-start mb-2">
-                      <h3 class="text-lg font-bold text-gray-900 line-clamp-1" title="${p.name}"> ${p.name}</h3>
-                      <div class="flex gap-2">
+                      <h3 class="text-base md:text-lg font-bold text-gray-900 line-clamp-1 pr-2" title="${p.name}">${p.name}</h3>
+                      <div class="flex gap-1 md:gap-2 flex-shrink-0">
                         <span class="text-[10px] uppercase font-bold px-2 py-1 rounded-full ${typeBadgeColor}"> ${typeLabel}</span>
-                        <span class="text-xs font-semibold px-2 py-1 rounded-full ${openTickets > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'} whitespace-nowrap"> ${openTickets} Open</span>
                       </div>
                     </div>
-                    <p class="text-sm text-gray-500 mb-4 line-clamp-2 h-10">${description}</p>
+                    <p class="text-xs md:text-sm text-gray-500 mb-4 line-clamp-2 h-10">${description}</p>
                     <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
                       <div class="flex flex-col">
                         <span class="text-[10px] uppercase text-gray-400 font-semibold tracking-wide mb-1">Active Members</span>
@@ -1309,11 +1029,10 @@
                         <div class="font-semibold text-gray-900">${projectTickets.length}</div>
                       </div>
                     </div>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                      <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">All: ${projectCounts['All Tickets']}</span>
-                      <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Open: ${projectCounts.Open}</span>
-                      <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">Delayed: ${projectCounts.Delayed}</span>
-                      <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Done: ${projectCounts.Done}</span>
+                    <div class="flex gap-2 mt-3 flex-wrap">
+                      <span class="text-[10px] md:text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full font-medium">Open: ${projectCounts.Open}</span>
+                      <span class="text-[10px] md:text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">Delayed: ${projectCounts.Delayed}</span>
+                      <span class="text-[10px] md:text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">Done: ${projectCounts.Done}</span>
                     </div>
                   </div>
                 </div>
@@ -1327,11 +1046,9 @@
         const chartElement = document.getElementById('adminTicketChart');
         if (!chartElement) return;
         const ctx = chartElement.getContext('2d');
-        // Destroy existing chart if it exists
         if (this.state.adminChartInstance) {
           this.state.adminChartInstance.destroy();
         }
-        // Generate Mock Trend Data adapted for new statuses
         const labels = [];
         const datasets = { all: [], open: [], todo: [], progress: [], review: [], done: [], delayed: [] };
         for (let i = 6; i >= 0; i--) {
@@ -1348,7 +1065,6 @@
           datasets.delayed.push(Math.floor(Math.random() * 1));
         }
         const currentStats = this.getTicketCounts();
-        // Map counts to the last data point
         const lastIdx = 6;
         datasets.all[lastIdx] = currentStats['All Tickets'];
         datasets.open[lastIdx] = currentStats.Open;
@@ -1357,6 +1073,7 @@
         datasets.review[lastIdx] = currentStats['In Review'];
         datasets.done[lastIdx] = currentStats.Done;
         datasets.delayed[lastIdx] = currentStats.Delayed;
+        
         this.state.adminChartInstance = new Chart(ctx, {
           type: 'line',
           data: {
@@ -1374,13 +1091,8 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
-            },
-            scales: {
-              y: { beginAtZero: true, grid: { display: true, drawBorder: false } },
-              x: { grid: { display: false } }
-            }
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
+            scales: { y: { beginAtZero: true, grid: { display: true, drawBorder: false } }, x: { grid: { display: false } } }
           }
         });
       },
@@ -1394,17 +1106,13 @@
         if (!ticket) return;
         this.state.selectedTicketId = ticketId;
         this.navigate('edit-ticket');
-        // Populate form
         document.getElementById('edit-ticket-id').value = ticket.id;
         document.getElementById('edit-ticket-subject').value = ticket.subject;
         document.getElementById('edit-ticket-priority').value = ticket.priority;
         document.getElementById('edit-ticket-type').value = ticket.type;
         document.getElementById('edit-ticket-description').value = ticket.description;
-        if (ticket.dueDate) {
-          document.getElementById('edit-ticket-due-date').value = ticket.dueDate.split('T')[0];
-        } else {
-          document.getElementById('edit-ticket-due-date').value = '';
-        }
+        if (ticket.dueDate) { document.getElementById('edit-ticket-due-date').value = ticket.dueDate.split('T')[0]; } 
+        else { document.getElementById('edit-ticket-due-date').value = ''; }
       },
       showToast(message, isError = true) {
         document.querySelectorAll('.toast').forEach(t => t.remove());
@@ -1442,24 +1150,19 @@
         const authView = document.getElementById('auth-view');
         const mainAppView = document.getElementById('main-app-view');
         const adminDashboardView = document.getElementById('admin-dashboard-view');
-        // Reset all views
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.auth-card').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-        // Handle Auth Views
+        
         if (viewName.startsWith('auth-')) {
           authView.classList.add('active');
           document.getElementById(viewName.replace('auth-', '') + '-view').classList.add('active');
           adminDashboardView.classList.remove('active');
           mainAppView.classList.remove('active');
-        }
-        // Handle Admin Dashboard View (Sidebar Layout)
-        else if (viewName === 'admin-dashboard' || (viewName === 'projects-list' && this.state.currentUser.role === 'Admin')) {
+        } else if (viewName === 'admin-dashboard' || (viewName === 'projects-list' && this.state.currentUser.role === 'Admin')) {
           adminDashboardView.classList.add('active');
           mainAppView.classList.remove('active');
-        }
-        // Handle Standard App Views (Top Nav Layout)
-        else {
+        } else {
           mainAppView.classList.add('active');
           adminDashboardView.classList.remove('active');
           if (document.getElementById(viewName + '-view')) {
@@ -1467,7 +1170,7 @@
           }
         }
         window.scrollTo(0, 0);
-        // Cleanup
+        
         if (viewName !== 'ticket-detail') {
           this.state.activeTicketTab = 'conversation';
           this.state.quillInstance = null;
@@ -1490,7 +1193,7 @@
           case 'project-detail': this.renderProjectDetail(); break;
           case 'ticket-detail': this.renderTicketDetail(); break;
           case 'new-ticket': this.renderNewTicketForm(); break;
-          case 'edit-ticket': /* Form is populated by loadEditTicket */ break;
+          case 'edit-ticket': break;
           default: this.navigate(defaultView);
         }
       },
@@ -1498,14 +1201,16 @@
         const navRight = document.getElementById('nav-right-side');
         const navTitle = document.getElementById('nav-title');
         if (!this.state.currentUser) { navRight.innerHTML = ''; navTitle.innerText = 'Workflow Help Desk'; return; }
+        
         let titleText = 'Workflow Help Desk';
         if (this.state.currentUser.role === 'Admin') { titleText += ' | Admin'; }
         navTitle.innerText = titleText;
+        
         const myNotifications = this.state.notifications.filter(n => n.userId === this.state.currentUser.id);
         const unreadCount = myNotifications.filter(n => !n.read).length;
         navRight.innerHTML = `
-          <span class="font-medium text-gray-600">${this.state.currentUser.name}</span>
-          <button id="live-chat-button" class="flex items-center text-sm font-medium text-gray-600 hover:text-teal-600 mr-2">
+          <span class="font-medium text-sm sm:text-base text-gray-600 hidden sm:inline-block">${this.state.currentUser.name}</span>
+          <button id="live-chat-button" class="hidden sm:flex items-center text-sm font-medium text-gray-600 hover:text-teal-600 mr-2">
             <svg class="h-5 w-5 mr-1"><use href="#icon-chat"></use></svg> Live Chat
           </button>
           <div class="relative">
@@ -1513,7 +1218,7 @@
               <svg class="h-6 w-6"><use href="#icon-bell"></use></svg>
               <span id="notification-dot" class="${unreadCount > 0 ? '' : 'hidden'} absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden max-w-sm">
               <div class="p-3 border-b border-gray-200"><h3 class="text-base font-semibold text-gray-900">Notifications</h3></div>
               <div id="notification-list" class="max-h-96 overflow-y-auto comment-scrollbar">
                 ${myNotifications.length === 0 ? '<p class="text-sm text-gray-500 p-4 text-center">No notifications.</p>' : myNotifications.map(n => `
@@ -1524,12 +1229,11 @@
               <div class="p-2 bg-gray-50 border-t border-gray-200"><button id="notification-clear" class="w-full text-center text-sm text-teal-600 hover:underline">Mark all as read</button></div>
             </div>
           </div>
-          <button id="logout-button" class="flex items-center text-sm font-medium text-gray-600 hover:text-teal-600">
-            <svg class="h-5 w-5 mr-1"><use href="#icon-log-out"></use></svg> Logout
+          <button id="logout-button" class="flex items-center p-2 sm:p-0 text-sm font-medium text-gray-600 hover:text-teal-600">
+            <svg class="h-5 w-5 sm:mr-1"><use href="#icon-log-out"></use></svg> <span class="hidden sm:inline">Logout</span>
           </button>
         `;
-        // Bind nav events
-        document.getElementById('live-chat-button').onclick = () => this.showToast('Live Chat feature is not connected to a backend.', false);
+        document.getElementById('live-chat-button')?.addEventListener('click', () => this.showToast('Live Chat feature is not connected to a backend.', false));
         document.getElementById('notification-button').onclick = () => document.getElementById('notification-panel').classList.toggle('hidden');
         document.getElementById('notification-clear').onclick = () => { this.markNotificationsAsRead(); document.getElementById('notification-panel').classList.add('hidden'); };
       },
@@ -1543,8 +1247,11 @@
             btn.classList.remove('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
             btn.classList.add('font-medium', 'text-gray-700', 'hover:bg-gray-100');
           });
-          document.getElementById('admin-nav-projects').classList.add('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
-          document.getElementById('admin-nav-projects').classList.remove('font-medium', 'text-gray-700', 'hover:bg-gray-100');
+          const proBtn = document.getElementById('admin-nav-projects');
+          if (proBtn) {
+             proBtn.classList.add('bg-teal-50', 'text-teal-800', 'shadow-sm', 'font-bold');
+             proBtn.classList.remove('font-medium', 'text-gray-700', 'hover:bg-gray-100');
+          }
         }
         let projectCardsHtml = '';
         let filteredProjects = projects;
@@ -1584,10 +1291,9 @@
               <div class="bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
                 <div class="p-5 flex-grow">
                   <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-bold text-gray-900 line-clamp-1" title="${p.name}"> ${p.name}</h3>
-                    <div class="flex gap-2">
+                    <h3 class="text-lg font-bold text-gray-900 line-clamp-1 pr-2" title="${p.name}"> ${p.name}</h3>
+                    <div class="flex gap-2 flex-shrink-0">
                       <span class="text-[10px] uppercase font-bold px-2 py-1 rounded-full ${typeBadgeColor}"> ${typeLabel}</span>
-                      <span class="text-xs font-semibold px-2 py-1 rounded-full ${openTickets > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'} whitespace-nowrap"> ${openTickets} Open</span>
                     </div>
                   </div>
                   <p class="text-sm text-gray-500 mb-4 line-clamp-2 h-10">${description}</p>
@@ -1600,6 +1306,9 @@
                       <div class="text-xs text-gray-500">Total Tickets</div>
                       <div class="font-semibold text-gray-900">${projectTickets.length}</div>
                     </div>
+                  </div>
+                  <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                      <span class="text-xs font-semibold px-2 py-1 rounded-full ${openTickets > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'} whitespace-nowrap"> ${openTickets} Open Tickets</span>
                   </div>
                 </div>
                 <a href="#" data-project-id="${p.id}" class="project-card block bg-gray-50 hover:bg-teal-50 border-t border-gray-200 p-3 text-center text-sm font-medium text-teal-600 transition-colors">
@@ -1615,9 +1324,9 @@
         projectList.innerHTML = projectCardsHtml;
         targetView.innerHTML = `
           <div class="${isClientView ? 'max-w-7xl mx-auto' : ''} p-4 sm:p-6 lg:p-8">
-            <div class="flex justify-between items-center mb-6">
-              <h2 id="dashboard-title" class="text-3xl font-bold text-gray-900">Projects</h2>
-              <button id="show-new-project-form" class="flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h2 id="dashboard-title" class="text-2xl sm:text-3xl font-bold text-gray-900">Projects</h2>
+              <button id="show-new-project-form" class="w-full sm:w-auto flex items-center justify-center h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 focus:outline-none shadow-sm">
                 <svg class="h-5 w-5 mr-2 -ml-1"><use href="#icon-plus"></use></svg>
                 Create New Project
               </button>
@@ -1660,9 +1369,9 @@
         };
         if (projectStatusButtons) {
           projectStatusButtons.innerHTML = Object.entries(statusMap).map(([label, key]) => `
-            <button data-filter="${key}" class="dashboard-btn ${key === this.state.currentFilter ? 'dashboard-btn-active' : ''}">
-              <span class="text-3xl font-bold text-gray-800">${counts[label] || 0}</span>
-              <span class="text-xs font-medium text-gray-600 mt-1 text-center">${label}</span>
+            <button data-filter="${key}" class="dashboard-btn ${key === this.state.currentFilter ? 'dashboard-btn-active' : ''} p-2 min-h-0 h-16 sm:h-24">
+              <span class="text-xl sm:text-3xl font-bold text-gray-800">${counts[label] || 0}</span>
+              <span class="text-[10px] sm:text-xs font-medium text-gray-600 mt-1 text-center">${label}</span>
             </button>
           `).join('');
           projectStatusButtons.querySelectorAll('button[data-filter]').forEach(btn => {
@@ -1686,7 +1395,7 @@
         ];
         const filterNav = document.getElementById('project-filter-nav');
         filterNav.innerHTML = filters.map(f => `
-          <button data-filter="${f.key}" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors ${f.key === this.state.currentFilter ? `${themeBg} ${themeText} font-semibold` : ''}">
+          <button data-filter="${f.key}" class="w-auto md:w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors ${f.key === this.state.currentFilter ? `${themeBg} ${themeText} font-semibold` : ''}">
             ${f.label}
           </button>
         `).join('');
@@ -1733,24 +1442,24 @@
         const assignedByUser = this.getUser(ticket.assignedByUserId);
         const isOverdue = ticket.dueDate && new Date(ticket.dueDate) < new Date() && ticket.status !== 'Done';
         document.getElementById('ticket-detail-header').innerHTML = `
-          <div class="flex justify-between items-start">
-            <h2 class="text-2xl font-bold text-gray-900">${ticket.subject}</h2>
-            <span class="text-sm font-semibold px-3 py-1 rounded-full ${this.getStatusBadge(ticket.status).match(/class="([^"]+)"/)[1]} flex-shrink-0 ml-4"> ${ticket.status}</span>
+          <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 break-words w-full sm:w-auto">${ticket.subject}</h2>
+            <span class="text-sm font-semibold px-3 py-1 rounded-full ${this.getStatusBadge(ticket.status).match(/class="([^"]+)"/)[1]} flex-shrink-0 whitespace-nowrap"> ${ticket.status}</span>
           </div>
-          <p class="text-sm text-gray-600 mt-1">ID: <span class="font-medium">${ticket.id}</span></p>
+          <p class="text-sm text-gray-600 mt-2">ID: <span class="font-medium">${ticket.id}</span></p>
         `;
         document.getElementById('ticket-detail-sidebar').innerHTML = `
           ${this.buildWorkflowActions(ticket)}
-          <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+          <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Details</h3>
             <div class="space-y-3 text-sm">
-              <div class="flex justify-between"><span class="text-gray-600">Priority:</span><span class="font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityBadge(ticket.priority).match(/class="([^"]+)"/)[1]}"> ${ticket.priority}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Type:</span><span class="font-medium text-gray-900">${ticket.type}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Due Date:</span><span class="font-medium ${isOverdue ? 'text-red-600' : 'text-gray-900'}"> ${this.formatDate(ticket.dueDate)}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Project:</span><span class="font-medium text-gray-900">${this.getProject(ticket.projectId).name}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Created By:</span><span class="font-medium text-gray-900">${createdByUser.name}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Assigned By:</span><span class="font-medium text-gray-900">${assignedByUser.name}</span></div>
-              <div class="flex justify-between"><span class="text-gray-600">Assigned To:</span><span class="font-medium text-gray-900">${this.getUser(ticket.assignedToUserId).name}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Priority:</span><span class="font-semibold px-2.5 py-0.5 rounded-full ${this.getPriorityBadge(ticket.priority).match(/class="([^"]+)"/)[1]}"> ${ticket.priority}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Type:</span><span class="font-medium text-gray-900 text-right">${ticket.type}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Due Date:</span><span class="font-medium text-right ${isOverdue ? 'text-red-600' : 'text-gray-900'}"> ${this.formatDate(ticket.dueDate)}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Project:</span><span class="font-medium text-gray-900 text-right">${this.getProject(ticket.projectId).name}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Created By:</span><span class="font-medium text-gray-900 text-right">${createdByUser.name}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Assigned By:</span><span class="font-medium text-gray-900 text-right">${assignedByUser.name}</span></div>
+              <div class="flex justify-between gap-4"><span class="text-gray-600">Assigned To:</span><span class="font-medium text-gray-900 text-right">${this.getUser(ticket.assignedToUserId).name}</span></div>
             </div>
           </div>
         `;
@@ -1790,7 +1499,7 @@
           tabContentHtml = `
             <div id="comment-list" class="space-y-4 max-h-96 overflow-y-auto comment-scrollbar p-1">${this.buildCommentList(ticket.comments)}</div>
             <div class="mt-6 pt-6 border-t border-gray-200">
-              <div id="comment-toolbar">
+              <div id="comment-toolbar" class="overflow-x-auto whitespace-nowrap">
                 <span class="ql-formats">
                   <button class="ql-bold"></button>
                   <button class="ql-italic"></button>
@@ -1873,9 +1582,9 @@
           const commentHTML = c.isHtml ? c.text : `<p>${c.text.replace(/\n/g, '<br>')}</p>`;
           return `<div class="flex items-start gap-3">
             <img src="https://placehold.co/40x40/e2e8f0/64748b?text=${user.name.charAt(0)}" alt=" ${user.name}" class="h-10 w-10 rounded-full flex-shrink-0">
-            <div class="flex-grow bg-gray-100 p-3 rounded-lg"><div class="flex justify-between"><span class="font-semibold text-sm text-gray-800">${user.name}</span><span class="text-xs text-gray-500"> ${this.timeAgo(c.timestamp)}</span></div>
+            <div class="flex-grow bg-gray-100 p-3 rounded-lg overflow-hidden"><div class="flex justify-between items-center"><span class="font-semibold text-sm text-gray-800 break-words">${user.name}</span><span class="text-xs text-gray-500 flex-shrink-0 pl-2"> ${this.timeAgo(c.timestamp)}</span></div>
             <div class="text-sm text-gray-700 mt-1 ql-snow" style="border:none;">
-              <div class="ql-editor static-content">${commentHTML}</div>
+              <div class="ql-editor static-content break-words">${commentHTML}</div>
             </div>
             </div>
           </div>`;
@@ -1884,22 +1593,22 @@
       buildHistoryList(history) {
         if (!history) return '<p class="text-sm text-gray-500 text-center">No history.</p>';
         const populatedHistory = history.map(h => ({ ...h, userName: h.userName || this.getUser(h.userId).name }));
-        return [...populatedHistory].reverse().map(h => `<div class="flex items-center gap-3">
-          <img src="https://placehold.co/32x32/e2e8f0/64748b?text=${h.userName ? h.userName.charAt(0) : '?'} " alt=" ${h.userName}" class="h-8 w-8 rounded-full flex-shrink-0">
+        return [...populatedHistory].reverse().map(h => `<div class="flex items-start sm:items-center gap-3">
+          <img src="https://placehold.co/32x32/e2e8f0/64748b?text=${h.userName ? h.userName.charAt(0) : '?'} " alt=" ${h.userName}" class="h-8 w-8 rounded-full flex-shrink-0 mt-1 sm:mt-0">
           <div class="flex-grow"><p class="text-sm"><span class="font-semibold text-gray-800">${h.userName || 'System'}</span> <span class="text-gray-600"> ${h.action}</span></p><p class="text-xs text-gray-500">${this.timeAgo(h.timestamp)}</p></div>
-        </div>`).join('<hr class="my-3">');
+        </div>`).join('<hr class="my-3 border-gray-100">');
       },
       buildResolutionTab(ticket) {
         if (ticket.status === 'Done' && ticket.resolution) return `<h3 class="text-lg font-semibold mb-3">Final Resolution</h3><div class="bg-gray-50 p-4 rounded-md border border-gray-200"><p class="text-gray-700 whitespace-pre-wrap">${ticket.resolution}</p></div>`;
         if (ticket.status === 'Done') return '<p class="text-center text-gray-500">This ticket was closed without a formal resolution.</p>';
         if (this.state.currentUser.id !== ticket.assignedToUserId && this.state.currentUser.role !== 'Admin') return '<p class="text-center text-gray-500">Awaiting resolution from the assigned agent.</p>';
-        return `<form id="resolution-form"><label class="block text-sm font-medium text-gray-700 mb-1">Add Resolution & Close Ticket</label><textarea id="resolution-text" rows="5" class="w-full rounded-md border border-gray-300 p-2 mb-3" required></textarea><button type="submit" class="h-10 px-4 bg-green-600 text-white rounded-md text-sm font-medium">Save Resolution & Mark Done</button></form>`;
+        return `<form id="resolution-form"><label class="block text-sm font-medium text-gray-700 mb-1">Add Resolution & Close Ticket</label><textarea id="resolution-text" rows="5" class="w-full rounded-md border border-gray-300 p-2 mb-3" required></textarea><button type="submit" class="h-10 px-4 bg-green-600 text-white rounded-md text-sm font-medium w-full sm:w-auto">Save Resolution & Mark Done</button></form>`;
       },
       buildTimeEntryTab(ticket) {
         const totalHours = ticket.timeEntries.reduce((sum, entry) => sum + parseFloat(entry.hours), 0).toFixed(1);
-        const list = ticket.timeEntries.length ? ticket.timeEntries.map(e => `<div class="p-3 bg-gray-50 rounded-lg border border-gray-200"><div class="flex justify-between"><span class="font-semibold text-sm">${this.getUser(e.userId).name} logged ${e.hours}h</span><span class="text-xs text-gray-500">${this.formatDate(e.date)}</span></div><p class="text-sm text-gray-700">${e.description}</p></div>`).join('<div class="my-3"></div>') : '<p class="text-center text-gray-500">No time logged.</p>';
+        const list = ticket.timeEntries.length ? ticket.timeEntries.map(e => `<div class="p-3 bg-gray-50 rounded-lg border border-gray-200"><div class="flex justify-between"><span class="font-semibold text-sm">${this.getUser(e.userId).name} logged ${e.hours}h</span><span class="text-xs text-gray-500">${this.formatDate(e.date)}</span></div><p class="text-sm text-gray-700 mt-1">${e.description}</p></div>`).join('<div class="my-3"></div>') : '<p class="text-center text-gray-500">No time logged.</p>';
         const canLogTime = (this.state.currentUser.role === 'Admin' || this.state.currentUser.id === ticket.assignedToUserId);
-        const form = canLogTime ? `<div class="mt-6 pt-6 border-t border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-3">Log Time</h3><form id="time-entry-form" class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="text-sm">Hours</label><input type="number" id="time-entry-hours" step="0.1" min="0.1" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></div><div><label class="text-sm">Date</label><input type="date" id="time-entry-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" value="${new Date().toISOString().split('T')[0]}" required></div></div><div><label class="text-sm">Description</label><input type="text" id="time-entry-description" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" required></div><div class="text-right"><button type="submit" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium">Log Time</button></div></form></div>` : '';
+        const form = canLogTime ? `<div class="mt-6 pt-6 border-t border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-3">Log Time</h3><form id="time-entry-form" class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="text-sm text-gray-700 font-medium">Hours</label><input type="number" id="time-entry-hours" step="0.1" min="0.1" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm mt-1" required></div><div><label class="text-sm text-gray-700 font-medium">Date</label><input type="date" id="time-entry-date" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm mt-1" value="${new Date().toISOString().split('T')[0]}" required></div></div><div><label class="text-sm text-gray-700 font-medium">Description</label><input type="text" id="time-entry-description" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm mt-1" required></div><div class="text-right"><button type="submit" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium w-full sm:w-auto">Log Time</button></div></form></div>` : '';
         return `<h3 class="text-lg font-semibold text-gray-800 mb-4">Time Log (Total: ${totalHours}h)</h3><div class="space-y-3 max-h-60 overflow-y-auto comment-scrollbar p-1">${list}</div>${form}`;
       },
       buildWorkflowActions(ticket) {
@@ -1912,12 +1621,12 @@
           html += `
             <div class="space-y-2 mb-4">
               <label class="block text-sm font-medium text-gray-700">Assign Ticket</label>
-              <div class="flex gap-2">
+              <div class="flex flex-col sm:flex-row gap-2">
                 <select id="assign-user" class="flex-grow h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm">
                   <option value="">Select a user...</option>
                   ${options}
                 </select>
-                <button id="assign-user-button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 flex-shrink-0">Assign</button>
+                <button id="assign-user-button" class="h-10 px-4 py-2 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 flex-shrink-0 w-full sm:w-auto">Assign</button>
               </div>
             </div>
           `;
@@ -1941,8 +1650,8 @@
             html += `<button data-status="Reopened" class="workflow-action-button w-full h-10 px-4 py-2 bg-red-500 text-white rounded-md text-sm font-medium mt-2 hover:bg-red-600">Reopen Ticket</button>`;
           }
         }
-        if (html === '') html = '<p class="text-sm text-gray-500 text-center">No actions available.</p>';
-        return `<div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-4">Workflow Actions</h3><div class="space-y-3">${html}</div></div>`;
+        if (html === '') html = '<p class="text-sm text-gray-500 text-center py-2">No actions available.</p>';
+        return `<div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-4">Workflow Actions</h3><div class="space-y-3">${html}</div></div>`;
       },
       renderNewProjectForm() { document.getElementById('new-project-form').reset(); },
       renderNewTicketForm() {
